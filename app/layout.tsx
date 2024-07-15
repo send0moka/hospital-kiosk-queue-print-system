@@ -16,35 +16,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  title,
 }: Readonly<{
   children: React.ReactNode
-  title?: string
 }>) {
-  const pageTitle = title
-    ? `${title} | RSU St. Elisabeth Purwokerto`
-    : "RSU St. Elisabeth Purwokerto"
   return (
     <html lang="en">
-      <head>
-        <title>{pageTitle}</title>
-      </head>
       <body
         className={cn(
-          "min-h-screen font-sans antialiased overflow-hidden",
+          "text-white min-h-screen font-sans antialiased overflow-hidden flex flex-col",
           fontSans.variable
         )}
         style={{
-          backgroundImage: "url('/bg.webp')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundAttachment: 'fixed'
+          backgroundImage: "url('/images/bg.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
         }}
       >
-        <div className="relative z-10 min-h-screen">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   )
