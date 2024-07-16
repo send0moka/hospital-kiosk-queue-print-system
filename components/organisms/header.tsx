@@ -1,21 +1,37 @@
+"use client"
 import React from "react"
-import Logo from "@/components/atoms/logo"
-import Text from "@/components/atoms/text"
-import H1 from "@/components/atoms/h1"
+import { usePathname } from "next/navigation"
+import { Logo } from "@/components/atoms"
 
 const Header = () => {
+  const pathname = usePathname()
+  
+  // Fungsi untuk mengecek apakah rute saat ini adalah halaman utama atau halaman sukses
+  const isMainOrSuccessPage = () => {
+    return pathname === '/' || pathname?.startsWith('/success/')
+  }
+
   return (
     <div>
-      {/* ketika di awal dan page terimakasih */}
-      <div className="flex gap-4 items-center">
-        <Logo className="h-10 md:h-12 lg:h-24" />
-        <div>
-          <Text>Rumah Sakit Umum</Text>
-          <H1 className="-mt-1 lg:mt-2">St. Elisabeth Purwokerto</H1>
+      {isMainOrSuccessPage() ? (
+        // Logo besar untuk halaman utama dan halaman sukses
+        <div className="flex gap-4 items-center">
+          <Logo className="h-10 md:h-12 lg:h-24" />
+          <div>
+            <p className="text-[24px] font-medium">Rumah Sakit Umum</p>
+            <h1 className="-mt-3 text-[48px] font-bold tracking-tight">St. Elisabeth Purwokerto</h1>
+          </div>
         </div>
-      </div>
-
-      {/* ketika di page konten */}
+      ) : (
+        // Logo kecil untuk halaman lainnya
+        <div className="flex gap-2 items-center">
+          <Logo className="h-8 md:h-10 lg:h-12" />
+          <div>
+            <small>Rumah Sakit Umum</small>
+            <p className="-mt-1 font-bold text-[20px]">St. Elisabeth Purwokerto</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

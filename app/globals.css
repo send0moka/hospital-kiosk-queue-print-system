@@ -67,3 +67,23 @@
       @apply bg-background text-foreground;
     }
   }
+
+  .bg-BPJS {
+    @apply bg-green-500/50
+  }
+
+  .bg-Umum {
+    @apply bg-yellow-500/50
+  }
+
+  .bg-Pasien.Lama {
+    @apply bg-purple-500/50
+  }
+
+  .bg-Belum.Booking {
+    @apply bg-rose-500/50
+  }
+
+  .bg-Sudah.Booking {
+    @apply bg-sky-500/50
+  }
