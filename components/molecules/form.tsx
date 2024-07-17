@@ -4,6 +4,7 @@ import { Button } from "@/components/atoms"
 import { Search, RefreshCcw } from "lucide-react"
 import { BookingModal } from "@/components/molecules"
 import { Spinner } from "@radix-ui/themes"
+import { useRouter } from "next/navigation"
 
 interface FormProps {
   type:
@@ -19,6 +20,7 @@ const Form: React.FC<FormProps> = ({ type }) => {
   const [error, setError] = useState<string | null>(null)
   const [bookingData, setBookingData] = useState<any | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const router = useRouter()
 
   const getConfig = () => {
     switch (type) {
@@ -100,15 +102,20 @@ const Form: React.FC<FormProps> = ({ type }) => {
       }
 
       const response = await fetch(endpoint)
-      if (!response.ok) {
-        throw new Error(
-          response.status === 404 ? "Data tidak ditemukan" : "Terjadi kesalahan"
-        )
-      }
       const data = await response.json()
-      setBookingData(data)
+
+      if (!response.ok) {
+        throw new Error(data.error || "Terjadi kesalahan")
+      }
+
+      if (data.redirect) {
+        return router.push(data.redirect)
+      } else {
+        setBookingData(data)
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : "Terjadi kesalahan")
+      setBookingData(null)
     } finally {
       setIsLoading(false)
       setIsModalOpen(true)

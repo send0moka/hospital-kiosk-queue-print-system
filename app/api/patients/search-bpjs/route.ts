@@ -12,7 +12,11 @@ export async function GET(req: Request) {
   try {
     const patient = await searchBPJSPatient(nomorBPJS)
     if (patient) {
-      return NextResponse.json(patient)
+      if (patient.fingerprint_status) {
+        return NextResponse.json(patient)
+      } else {
+        return NextResponse.json({ redirect: "/fingerprint" })
+      }
     } else {
       return NextResponse.json({ error: "Pasien BPJS tidak ditemukan" }, { status: 404 })
     }

@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS pasien (
     jenis_kelamin ENUM('L', 'P') NOT NULL,
     alamat TEXT,
     nomor_telepon VARCHAR(15),
-    nomor_bpjs VARCHAR(13)
+    nomor_bpjs VARCHAR(13),
+    fingerprint_status BOOLEAN DEFAULT FALSE
 );
 
 -- Tabel Booking
@@ -53,18 +54,18 @@ CREATE TABLE IF NOT EXISTS jadwal_dokter (
     FOREIGN KEY (poli_id) REFERENCES poli(id)
 );
 
--- Insert beberapa data contoh
-INSERT INTO pasien (nomor_rekam_medis, nama, tanggal_lahir, jenis_kelamin, alamat, nomor_telepon, nomor_bpjs) VALUES
+-- Insert beberapa data contoh dengan kolom fingerprint_status
+INSERT INTO pasien (nomor_rekam_medis, nama, tanggal_lahir, jenis_kelamin, alamat, nomor_telepon, nomor_bpjs, fingerprint_status) VALUES
 -- Pasien BPJS
-('123456', 'John Doe', '1990-01-01', 'L', 'Jl. Contoh No. 123', '081234567890', '0001234567890'),
-('234567', 'Jane Smith', '1995-05-05', 'P', 'Jl. Sample No. 456', '082345678901', '0002345678901'),
-('345678', 'Bob Johnson', '1985-03-15', 'L', 'Jl. Test No. 789', '083456789012', '0003456789012'),
-('456789', 'Alice Brown', '1992-07-20', 'P', 'Jl. Demo No. 101', '084567890123', '0004567890123'),
+('123456', 'John Doe', '1990-01-01', 'L', 'Jl. Contoh No. 123', '081234567890', '0001234567890', TRUE),
+('234567', 'Jane Smith', '1995-05-05', 'P', 'Jl. Sample No. 456', '082345678901', '0002345678901', FALSE),
+('345678', 'Bob Johnson', '1985-03-15', 'L', 'Jl. Test No. 789', '083456789012', '0003456789012', TRUE),
+('456789', 'Alice Brown', '1992-07-20', 'P', 'Jl. Demo No. 101', '084567890123', '0004567890123', FALSE),
 -- Pasien Umum
-('567890', 'Charlie Davis', '1988-11-30', 'L', 'Jl. Experiment No. 202', '085678901234', NULL),
-('678901', 'Diana Evans', '1993-09-25', 'P', 'Jl. Trial No. 303', '086789012345', NULL),
-('789012', 'Edward Foster', '1987-02-14', 'L', 'Jl. Example No. 404', '087890123456', NULL),
-('890123', 'Grace Harris', '1991-12-05', 'P', 'Jl. Instance No. 505', '088901234567', NULL);
+('567890', 'Charlie Davis', '1988-11-30', 'L', 'Jl. Experiment No. 202', '085678901234', NULL, TRUE),
+('678901', 'Diana Evans', '1993-09-25', 'P', 'Jl. Trial No. 303', '086789012345', NULL, FALSE),
+('789012', 'Edward Foster', '1987-02-14', 'L', 'Jl. Example No. 404', '087890123456', NULL, TRUE),
+('890123', 'Grace Harris', '1991-12-05', 'P', 'Jl. Instance No. 505', '088901234567', NULL, FALSE);
 
 INSERT INTO poli (nama, deskripsi) VALUES
 ('Umum', 'Poli untuk pemeriksaan umum'),

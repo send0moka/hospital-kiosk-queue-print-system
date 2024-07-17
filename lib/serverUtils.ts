@@ -24,7 +24,7 @@ export async function searchUmumBooking(kodeBooking: string) {
 export async function searchBPJSBooking(kodeBooking: string) {
   try {
     const booking = await executeQuery(
-      `SELECT b.*, p.nama, p.nomor_bpjs 
+      `SELECT b.*, p.nama, p.nomor_bpjs, p.fingerprint_status 
        FROM booking b 
        JOIN pasien p ON b.pasien_id = p.id 
        WHERE b.kode_booking = ? AND b.jenis_layanan = 'BPJS'`,
@@ -45,7 +45,7 @@ export async function searchBPJSBooking(kodeBooking: string) {
 export async function searchBPJSPatient(nomorBPJS: string) {
   try {
     const patient = await executeQuery(
-      `SELECT * FROM pasien WHERE nomor_bpjs = ? AND id NOT IN (SELECT pasien_id FROM booking WHERE jenis_layanan = 'BPJS')`,
+      `SELECT *, fingerprint_status FROM pasien WHERE nomor_bpjs = ? AND id NOT IN (SELECT pasien_id FROM booking WHERE jenis_layanan = 'BPJS')`,
       [nomorBPJS]
     )
 
