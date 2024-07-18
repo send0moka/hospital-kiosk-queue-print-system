@@ -36,7 +36,7 @@ const Footer = () => {
   }
 
   const isHomePage = pathname === '/'
-  const isSpecialPage = pathname === '/loket' || pathname === '/fingerprint'
+  const isSpecialPage = pathname === '/loket' || pathname === '/fingerprint' || pathname === '/aktivasi'
 
   return (
     <div className="flex justify-between items-center text-[24px]">

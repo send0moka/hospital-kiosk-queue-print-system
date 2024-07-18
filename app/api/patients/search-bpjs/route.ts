@@ -13,7 +13,11 @@ export async function GET(req: Request) {
     const patient = await searchBPJSPatient(nomorBPJS)
     if (patient) {
       if (patient.fingerprint_status) {
-        return NextResponse.json(patient)
+        if (patient.bpjs_status) {
+          return NextResponse.json({ redirect: "/bpjs/pasien-lama/belum-booking/rujukan" })
+        } else {
+          return NextResponse.json({ redirect: "/aktivasi" })
+        }
       } else {
         return NextResponse.json({ redirect: "/fingerprint" })
       }

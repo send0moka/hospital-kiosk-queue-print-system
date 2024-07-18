@@ -5,6 +5,8 @@ import { Search, RefreshCcw } from "lucide-react"
 import { BookingModal } from "@/components/molecules"
 import { Spinner } from "@radix-ui/themes"
 import { useRouter } from "next/navigation"
+import { signIn, useSession } from "next-auth/react"
+import { z } from "zod"
 
 interface FormProps {
   type:
@@ -21,6 +23,7 @@ const Form: React.FC<FormProps> = ({ type }) => {
   const [bookingData, setBookingData] = useState<any | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
+  const { data: session } = useSession()
 
   const getConfig = () => {
     switch (type) {
@@ -77,13 +80,49 @@ const Form: React.FC<FormProps> = ({ type }) => {
     }
   }
 
+  const validateBPJS = (inputValue: string) => {
+    const bpjsSchema = z.string().length(13).regex(/^\d+$/, "Nomor BPJS harus berupa 13 digit angka")
+    return bpjsSchema.safeParse(inputValue)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-
+  
     const inputValue = inputValues.join("")
 
+    if (type === "bpjs-belum-booking") {
+      const validationResult = validateBPJS(inputValue)
+  
+      if (!validationResult.success) {
+        setError(validationResult.error.errors[0].message)
+        setIsLoading(false)
+        return
+      }
+
+      try {
+        console.log("Attempting to sign in with BPJS number:", inputValue);
+        const result = await signIn("credentials", {
+          nomor_bpjs: inputValue,
+          redirect: false,
+        })
+
+        console.log("Sign in result:", result);
+  
+        if (result?.error) {
+          setError("Nomor BPJS tidak valid")
+        } else {
+          router.push("/bpjs/pasien-lama/belum-booking/rujukan")
+        }
+      } catch (error) {
+        setError("Terjadi kesalahan saat verifikasi")
+      } finally {
+        setIsLoading(false)
+      }
+      return
+    }
+  
     try {
       let endpoint
       switch (type) {
@@ -93,21 +132,18 @@ const Form: React.FC<FormProps> = ({ type }) => {
         case "umum-sudah-booking":
           endpoint = `/api/bookings/search-umum?kode=${inputValue}`
           break
-        case "bpjs-belum-booking":
-          endpoint = `/api/patients/search-bpjs?nomor=${inputValue}`
-          break
         case "umum-belum-booking":
           endpoint = `/api/patients/search-umum?nomor=${inputValue}`
           break
       }
-
+  
       const response = await fetch(endpoint)
       const data = await response.json()
-
+  
       if (!response.ok) {
         throw new Error(data.error || "Terjadi kesalahan")
       }
-
+  
       if (data.redirect) {
         return router.push(data.redirect)
       } else {
@@ -177,6 +213,7 @@ const Form: React.FC<FormProps> = ({ type }) => {
             />
           ))}
         </div>
+        {error && <p className="text-red-500">{error}</p>}
         <p>{config.description}</p>
         <div className="flex gap-4">
           <Button

@@ -43,11 +43,13 @@ export async function searchBPJSBooking(kodeBooking: string) {
 }
 
 export async function searchBPJSPatient(nomorBPJS: string) {
+  console.log("searchBPJSPatient called with:", nomorBPJS);
   try {
     const patient = await executeQuery(
-      `SELECT *, fingerprint_status FROM pasien WHERE nomor_bpjs = ? AND id NOT IN (SELECT pasien_id FROM booking WHERE jenis_layanan = 'BPJS')`,
+      `SELECT *, fingerprint_status, bpjs_status FROM pasien WHERE nomor_bpjs = ? AND id NOT IN (SELECT pasien_id FROM booking WHERE jenis_layanan = 'BPJS')`,
       [nomorBPJS]
     )
+    console.log("executeQuery result:", patient);
 
     if (Array.isArray(patient) && patient.length > 0) {
       return patient[0]
