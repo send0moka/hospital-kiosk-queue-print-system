@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS booking (
 -- Insert data pasien
 INSERT INTO pasien (nomor_rekam_medis, nama, tanggal_lahir, jenis_kelamin, alamat, nomor_telepon, nomor_bpjs, fingerprint_status, bpjs_status) VALUES
 -- Pasien BPJS
-('123456', 'John Doe', '1990-01-01', 'L', 'Jl. Contoh No. 123', '081234567890', '0001234567890', TRUE, TRUE),
+('123456', 'John Doe', '1990-01-01', 'L', 'Jl. Contoh No. 123, Sokanegara, Kec. Purwokerto Timur, Kab. Banyumas, Jawa Tengah 53161', '081234567890', '0001234567890', TRUE, TRUE),
 ('234567', 'Jane Smith', '1995-05-05', 'P', 'Jl. Sample No. 456', '082345678901', '0002345678901', FALSE, TRUE),
 ('345678', 'Bob Johnson', '1985-03-15', 'L', 'Jl. Test No. 789', '083456789012', '0003456789012', TRUE, FALSE),
 ('456789', 'Alice Brown', '1992-07-20', 'P', 'Jl. Demo No. 101', '084567890123', '0004567890123', FALSE, FALSE),

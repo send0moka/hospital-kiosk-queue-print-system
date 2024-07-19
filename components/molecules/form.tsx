@@ -81,7 +81,10 @@ const Form: React.FC<FormProps> = ({ type }) => {
   }
 
   const validateBPJS = (inputValue: string) => {
-    const bpjsSchema = z.string().length(13).regex(/^\d+$/, "Nomor BPJS harus berupa 13 digit angka")
+    const bpjsSchema = z
+      .string()
+      .length(13)
+      .regex(/^\d+$/, "Nomor BPJS harus berupa 13 digit angka")
     return bpjsSchema.safeParse(inputValue)
   }
 
@@ -89,12 +92,12 @@ const Form: React.FC<FormProps> = ({ type }) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-  
+
     const inputValue = inputValues.join("")
 
     if (type === "bpjs-belum-booking") {
       const validationResult = validateBPJS(inputValue)
-  
+
       if (!validationResult.success) {
         setError(validationResult.error.errors[0].message)
         setIsLoading(false)
@@ -102,14 +105,14 @@ const Form: React.FC<FormProps> = ({ type }) => {
       }
 
       try {
-        console.log("Attempting to sign in with BPJS number:", inputValue);
+        console.log("Attempting to sign in with BPJS number:", inputValue)
         const result = await signIn("credentials", {
           nomor_bpjs: inputValue,
           redirect: false,
         })
 
-        console.log("Sign in result:", result);
-  
+        console.log("Sign in result:", result)
+
         if (result?.error) {
           setError("Nomor BPJS tidak valid")
         } else {
@@ -122,7 +125,7 @@ const Form: React.FC<FormProps> = ({ type }) => {
       }
       return
     }
-  
+
     try {
       let endpoint
       switch (type) {
@@ -136,25 +139,28 @@ const Form: React.FC<FormProps> = ({ type }) => {
           endpoint = `/api/patients/search-umum?nomor=${inputValue}`
           break
       }
-  
+
       const response = await fetch(endpoint)
       const data = await response.json()
-  
+
       if (!response.ok) {
         throw new Error(data.error || "Terjadi kesalahan")
       }
-  
+
       if (data.redirect) {
         return router.push(data.redirect)
+      } else if (type === "bpjs-sudah-booking" && data.nomor_bpjs) {
+        router.push(`/bpjs/pasien-lama/sudah-booking/${data.nomor_bpjs}`)
       } else {
         setBookingData(data)
+        setIsModalOpen(true)
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : "Terjadi kesalahan")
       setBookingData(null)
+      setIsModalOpen(true)
     } finally {
       setIsLoading(false)
-      setIsModalOpen(true)
     }
   }
 

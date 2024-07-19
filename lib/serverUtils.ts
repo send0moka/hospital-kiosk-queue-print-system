@@ -43,13 +43,13 @@ export async function searchBPJSBooking(kodeBooking: string) {
 }
 
 export async function searchBPJSPatient(nomorBPJS: string) {
-  console.log("searchBPJSPatient called with:", nomorBPJS);
+  console.log("searchBPJSPatient called with:", nomorBPJS)
   try {
     const patient = await executeQuery(
       `SELECT *, fingerprint_status, bpjs_status FROM pasien WHERE nomor_bpjs = ? AND id NOT IN (SELECT pasien_id FROM booking WHERE jenis_layanan = 'BPJS')`,
       [nomorBPJS]
     )
-    console.log("executeQuery result:", patient);
+    console.log("executeQuery result:", patient)
 
     if (Array.isArray(patient) && patient.length > 0) {
       return patient[0]
@@ -77,5 +77,35 @@ export async function searchUmumPatient(nomorRekamMedis: string) {
   } catch (error) {
     console.error("Error searching Umum patient:", error)
     throw error
+  }
+}
+
+export async function getPatientDataByBPJS(nomorBpjs: string) {
+  try {
+    const result = await executeQuery(
+      `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, d.nama AS dokter_nama
+       FROM pasien p
+       JOIN booking b ON p.id = b.pasien_id
+       JOIN poli po ON b.poli_id = po.id
+       JOIN jadwal_dokter jd ON b.poli_id = jd.poli_id
+       JOIN dokter d ON jd.dokter_id = d.id
+       WHERE p.nomor_bpjs = ? AND b.jenis_layanan = 'BPJS'
+       ORDER BY b.tanggal_booking DESC, b.jam_booking DESC
+       LIMIT 1`,
+      [nomorBpjs]
+    );
+
+    if (Array.isArray(result) && result.length > 0) {
+      const patientData = result[0];
+      // Format tanggal_booking menjadi string YYYY-MM-DD
+      patientData.tanggal_booking = new Date(patientData.tanggal_booking).toISOString().split('T')[0];
+      // jam_booking sudah dalam format yang benar (HH:MM:SS)
+      return patientData;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching patient data:", error);
+    throw error;
   }
 }
