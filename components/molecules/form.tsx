@@ -151,6 +151,10 @@ const Form: React.FC<FormProps> = ({ type }) => {
         return router.push(data.redirect)
       } else if (type === "bpjs-sudah-booking" && data.nomor_bpjs) {
         router.push(`/bpjs/pasien-lama/sudah-booking/${data.nomor_bpjs}`)
+      } else if (type === "umum-sudah-booking" && data.kode_booking) {
+        router.push(`/umum/pasien-lama/sudah-booking/${data.kode_booking}/poli`)
+      } else if (type === "umum-belum-booking" && data.nomor_rekam_medis) {
+        router.push(`/umum/pasien-lama/belum-booking/${data.nomor_rekam_medis}/poli`)
       } else {
         setBookingData(data)
         setIsModalOpen(true)

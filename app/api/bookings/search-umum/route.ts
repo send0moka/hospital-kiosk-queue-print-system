@@ -12,9 +12,12 @@ export async function GET(req: Request) {
   try {
     const booking = await searchUmumBooking(kodeBooking)
     if (booking) {
-      return NextResponse.json(booking)
+      return NextResponse.json({
+        ...booking,
+        redirect: `/umum/pasien-lama/sudah-booking/${kodeBooking}/poli`
+      })
     } else {
-      return NextResponse.json({ error: "Booking Umum not found" }, { status: 404 })
+      return NextResponse.json({ error: "Booking Umum tidak ditemukan" }, { status: 404 })
     }
   } catch (error) {
     console.error("Error searching Umum booking:", error)

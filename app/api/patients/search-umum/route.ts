@@ -12,7 +12,10 @@ export async function GET(req: Request) {
   try {
     const patient = await searchUmumPatient(nomorRekamMedis)
     if (patient) {
-      return NextResponse.json(patient)
+      return NextResponse.json({
+        ...patient,
+        redirect: `/umum/pasien-lama/belum-booking/${nomorRekamMedis}/poli`
+      })
     } else {
       return NextResponse.json({ error: "Pasien Umum tidak ditemukan" }, { status: 404 })
     }
