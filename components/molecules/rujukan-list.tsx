@@ -30,14 +30,14 @@ const RujukanList: React.FC = () => {
       }
 
       try {
-        const response = await fetch('/api/rujukan')
+        const response = await fetch("/api/rujukan")
         if (!response.ok) {
-          throw new Error('Failed to fetch rujukan')
+          throw new Error("Failed to fetch rujukan")
         }
         const data = await response.json()
         setRujukan(data)
       } catch (err) {
-        setError('Terjadi kesalahan saat mengambil data rujukan')
+        setError("Terjadi kesalahan saat mengambil data rujukan")
         console.error(err)
       } finally {
         setIsLoading(false)
@@ -49,22 +49,24 @@ const RujukanList: React.FC = () => {
 
   const handlePilihRujukan = async (rujukanId: number) => {
     try {
-      const response = await fetch('/api/bookings/create-bpjs', {
-        method: 'POST',
+      const response = await fetch("/api/bookings/create-bpjs", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ rujukanId }),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create booking')
+        throw new Error("Failed to create booking")
       }
 
       const data = await response.json()
-      router.push(`/bpjs/pasien-lama/belum-booking/rujukan/confirmation/${data.bookingId}`)
+      router.push(
+        `/bpjs/pasien-lama/belum-booking/rujukan/confirmation/${data.bookingId}`
+      )
     } catch (err) {
-      setError('Terjadi kesalahan saat membuat booking')
+      setError("Terjadi kesalahan saat membuat booking")
       console.error(err)
     }
   }
@@ -74,29 +76,44 @@ const RujukanList: React.FC = () => {
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>
+    return <div>{error}</div>
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Daftar Rujukan</h2>
+    <div className="flex-grow flex flex-col gap-4 justify-center">
       {rujukan.length === 0 ? (
         <p>Tidak ada rujukan yang tersedia</p>
       ) : (
         rujukan.map((r) => (
-          <div key={r.id} className="border p-4 rounded-lg">
-            <h3 className="font-semibold">Nomor Rujukan: {r.nomor_rujukan}</h3>
-            <p>Tanggal: {new Date(r.tanggal_rujukan).toLocaleDateString()}</p>
-            <p>Faskes Perujuk: {r.faskes_perujuk}</p>
-            <p>Diagnosis: {r.diagnosis}</p>
-            <p>Poli Tujuan: {r.poli}</p>
-            <Button
-              variant="primary"
+          <div key={r.id} className="bg-white text-black p-4 rounded-lg">
+            <div className="grid grid-cols-6 items-center">
+              <div>
+                <strong>Nomor Rujukan:</strong>
+                <p>{r.nomor_rujukan}</p>
+              </div>
+              <div>
+                <strong>Tanggal:</strong>
+                <p>{new Date(r.tanggal_rujukan).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <strong>Faskes Perujuk:</strong>
+                <p>{r.faskes_perujuk}</p>
+              </div>
+              <div>
+                <strong>Diagnosis:</strong>
+                <p>{r.diagnosis}</p>
+              </div>
+              <div>
+                <strong>Poli Tujuan:</strong>
+                <p>{r.poli}</p>
+              </div>
+              <Button
               onClick={() => handlePilihRujukan(r.id)}
-              className="mt-2"
+              variant="primary"
             >
               Pilih
             </Button>
+            </div>
           </div>
         ))
       )}

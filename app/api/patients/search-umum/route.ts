@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     if (patient) {
       return NextResponse.json({
         ...patient,
-        redirect: `/umum/pasien-lama/belum-booking/${nomorRekamMedis}/poli`
+        redirect: `/umum/pasien-lama/belum-booking/${nomorRekamMedis}/pilih-poli`
       })
     } else {
       return NextResponse.json({ error: "Pasien Umum tidak ditemukan" }, { status: 404 })

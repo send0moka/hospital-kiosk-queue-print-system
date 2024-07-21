@@ -1,9 +1,10 @@
 "use client"
 
-import { useRouter, useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useRouter, useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Layout } from "@/components/organisms"
 import { PoliCard } from "@/components/molecules"
+import { createSlug } from "@/lib/utils"
 
 interface Poli {
   id: number
@@ -16,30 +17,34 @@ const PilihPoli = () => {
   const router = useRouter()
   const params = useParams()
   const [identifier, setIdentifier] = useState<string | null>(null)
-  const [poliList, setPoliList] = useState([])
+  const [poliList, setPoliList] = useState<Poli[]>([])
 
   useEffect(() => {
-    if (params.kodeBooking) {
-      setIdentifier(params.kodeBooking as string)
-    } else if (params.nomorRM) {
+    if (params.nomorRM) {
       setIdentifier(params.nomorRM as string)
+    } else if (params.kodeBooking) {
+      setIdentifier(params.kodeBooking as string)
     }
     fetchPoliList()
   }, [params])
 
   const fetchPoliList = async () => {
     try {
-      const response = await fetch('/api/poli/list')
+      const response = await fetch("/api/poli/list")
       const data = await response.json()
       setPoliList(data)
     } catch (error) {
-      console.error('Error fetching poli list:', error)
+      console.error("Error fetching poli list:", error)
     }
   }
 
-  const handlePoliSelection = (poliId: number) => {
-    // Implement the next step after poli selection
-    console.log(`Selected poli ${poliId} for ${identifier}`)
+  const handlePoliSelection = (poliId: number, poliNama: string) => {
+    const poliSlug = createSlug(poliNama);
+    if (params.nomorRM) {
+      router.push(`/umum/pasien-lama/sudah-booking/${params.kodeBooking}/${poliSlug}`)
+    } else if (params.kodeBooking) {
+      router.push(`/umum/pasien-lama/belum-booking/${params.nomorRM}/${poliSlug}`)
+    }
   }
 
   return (
@@ -61,13 +66,13 @@ const PilihPoli = () => {
         </div>
       </div>
       <div className="flex flex-wrap flex-grow justify-center gap-4">
-        {poliList.map((poli: any) => (
+        {poliList.map((poli: Poli) => (
           <PoliCard
             key={poli.id}
             nama={poli.nama}
             jumlahDokter={poli.jumlah_dokter}
             icon={poli.icon}
-            onClick={() => handlePoliSelection(poli.id)}
+            onClick={() => handlePoliSelection(poli.id, poli.nama)}
           />
         ))}
       </div>

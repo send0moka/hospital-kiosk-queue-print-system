@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { searchUmumBooking } from "@/lib/serverUtils"
+import { createSlug } from "@/lib/utils"
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -12,9 +13,11 @@ export async function GET(req: Request) {
   try {
     const booking = await searchUmumBooking(kodeBooking)
     if (booking) {
+      const poliSlug = createSlug(booking.poli_nama)
       return NextResponse.json({
         ...booking,
-        redirect: `/umum/pasien-lama/sudah-booking/${kodeBooking}/poli`
+        poli_slug: poliSlug,
+        redirect: `/umum/pasien-lama/sudah-booking/${kodeBooking}/${poliSlug}`
       })
     } else {
       return NextResponse.json({ error: "Booking Umum tidak ditemukan" }, { status: 404 })

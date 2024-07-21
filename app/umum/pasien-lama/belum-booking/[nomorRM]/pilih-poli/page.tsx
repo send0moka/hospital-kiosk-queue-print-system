@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Layout } from "@/components/organisms"
 import { PoliCard } from "@/components/molecules"
+import { createSlug } from "@/lib/utils"
 
 interface Poli {
   id: number
@@ -37,9 +38,13 @@ const PilihPoli = () => {
     }
   }
 
-  const handlePoliSelection = (poliId: number) => {
-    // Implement the next step after poli selection
-    console.log(`Selected poli ${poliId} for ${identifier}`)
+  const handlePoliSelection = (poliId: number, poliNama: string) => {
+    const poliSlug = createSlug(poliNama);
+    if (params.nomorRM) {
+      router.push(`/umum/pasien-lama/belum-booking/${params.nomorRM}/${poliSlug}`)
+    } else if (params.kodeBooking) {
+      router.push(`/umum/pasien-lama/sudah-booking/${params.kodeBooking}/${poliSlug}`)
+    }
   }
 
   return (
@@ -61,13 +66,13 @@ const PilihPoli = () => {
         </div>
       </div>
       <div className="flex flex-wrap flex-grow justify-center gap-4">
-        {poliList.map((poli: any) => (
+        {poliList.map((poli: Poli) => (
           <PoliCard
             key={poli.id}
             nama={poli.nama}
             jumlahDokter={poli.jumlah_dokter}
             icon={poli.icon}
-            onClick={() => handlePoliSelection(poli.id)}
+            onClick={() => handlePoliSelection(poli.id, poli.nama)}
           />
         ))}
       </div>

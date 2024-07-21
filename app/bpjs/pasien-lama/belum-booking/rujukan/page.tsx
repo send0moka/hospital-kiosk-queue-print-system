@@ -25,7 +25,9 @@ const BPJSRujukanPage = () => {
 
   return (
     <Layout>
-      <div className="flex justify-end items-center gap-2">
+      <div className="flex justify-between">
+      <h1 className="text-4xl font-bold mb-4">Pilih Rujukan</h1>
+      <div className="flex items-center gap-2">
         <p className="bg-BPJS h-fit px-6 py-2 rounded-full font-bold tracking-wide">
           BPJS
         </p>
@@ -41,6 +43,7 @@ const BPJSRujukanPage = () => {
         <p className="bg-Rujukan h-fit px-6 py-2 rounded-full font-bold tracking-wide">
           Rujukan
         </p>
+      </div>
       </div>
       <RujukanList />
     </Layout>

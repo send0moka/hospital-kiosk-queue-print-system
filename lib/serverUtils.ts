@@ -3,9 +3,10 @@ import { executeQuery } from "./utils"
 export async function searchUmumBooking(kodeBooking: string) {
   try {
     const booking = await executeQuery(
-      `SELECT b.*, p.nama, p.nomor_rekam_medis 
+      `SELECT b.*, p.nama, p.nomor_rekam_medis, po.nama AS poli_nama 
        FROM booking b 
        JOIN pasien p ON b.pasien_id = p.id 
+       JOIN poli po ON b.poli_id = po.id
        WHERE b.kode_booking = ? AND b.jenis_layanan = 'Umum'`,
       [kodeBooking]
     )
