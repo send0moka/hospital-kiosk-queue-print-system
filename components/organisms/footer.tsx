@@ -36,7 +36,7 @@ const Footer = () => {
   }
 
   const isHomePage = pathname === '/'
-  const isLoketPage = pathname === '/loket'
+  const isSpecialPage = pathname === '/loket' || pathname === '/fingerprint' || pathname === '/aktivasi'
 
   return (
     <div className="flex justify-between items-center text-[24px]">
@@ -47,8 +47,8 @@ const Footer = () => {
           <span>Self Service Application</span>
           <a href="bantuan">Bantuan & Informasi</a>
         </>
-      ) : isLoketPage ? (
-        // Footer untuk halaman loket
+      ) : isSpecialPage ? (
+        // Footer untuk halaman loket dan fingerprint
         <>
           <Button variant="secondary" className="gap-1 p-7" onClick={handleBack}>
             <ArrowLeft size={24} />

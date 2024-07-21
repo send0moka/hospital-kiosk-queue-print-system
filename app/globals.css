@@ -87,3 +87,23 @@
   .bg-Sudah.Booking {
     @apply bg-sky-500/50
   }
+
+  .bg-Rujukan {
+    @apply bg-teal-500/50
+  }
+
+  tr {
+    @apply align-top
+  }
+
+  td:first-child {
+    @apply text-nowrap
+  }
+
+  td:last-child {
+    @apply font-medium text-balance
+  }
+
+  td:nth-child(2) {
+    @apply px-10
+  }
