@@ -5,28 +5,16 @@ import { authOptions } from "../auth/[...nextauth]/route"
 
 export async function GET(req: Request) {
   try {
-    console.log("Mencoba mendapatkan sesi...")
-    const session = await getServerSession(authOptions)
-    console.log("Session:", session)
+    const { searchParams } = new URL(req.url)
+    const nomorBPJS = searchParams.get('nomor_bpjs')
 
-    if (!session) {
-      console.log("Tidak ada sesi")
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    if (!session.user) {
-      console.log("Tidak ada user dalam sesi")
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    if (!session.user.nomor_bpjs) {
-      console.log("Tidak ada nomor BPJS dalam sesi user")
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    if (!nomorBPJS) {
+      return NextResponse.json({ error: "Nomor BPJS is required" }, { status: 400 })
     }
 
     const [pasien]: any[] = await executeQuery(
       "SELECT id FROM pasien WHERE nomor_bpjs = ?",
-      [session.user.nomor_bpjs]
+      [nomorBPJS]
     )
 
     if (!pasien) {
@@ -34,7 +22,7 @@ export async function GET(req: Request) {
     }
 
     const rujukan = await executeQuery(
-      `SELECT r.id, r.nomor_rujukan, r.tanggal_rujukan, r.faskes_perujuk, r.diagnosis, p.nama as poli
+      `SELECT r.id, r.nomor_rujukan, r.tanggal_rujukan, r.faskes_perujuk, r.diagnosis, p.nama as poli, p.id as poli_id
        FROM rujukan r
        JOIN poli p ON r.poli_id = p.id
        WHERE r.pasien_id = ?
