@@ -116,7 +116,7 @@ const Form: React.FC<FormProps> = ({ type }) => {
         if (result?.error) {
           setError("Nomor BPJS tidak valid")
         } else {
-          router.push("/bpjs/pasien-lama/belum-booking/rujukan")
+          router.push(`/bpjs/pasien-lama/belum-booking/${inputValue}/rujukan`)
         }
       } catch (error) {
         setError("Terjadi kesalahan saat verifikasi")

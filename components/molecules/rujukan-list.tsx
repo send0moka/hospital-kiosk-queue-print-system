@@ -12,9 +12,14 @@ interface Rujukan {
   faskes_perujuk: string
   diagnosis: string
   poli: string
+  poli_id: number
 }
 
-const RujukanList: React.FC = () => {
+interface RujukanListProps {
+  nomorBPJS: string
+}
+
+const RujukanList: React.FC<RujukanListProps> = ({ nomorBPJS }) => {
   const [rujukan, setRujukan] = useState<Rujukan[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -30,7 +35,7 @@ const RujukanList: React.FC = () => {
       }
 
       try {
-        const response = await fetch("/api/rujukan")
+        const response = await fetch(`/api/rujukan?nomor_bpjs=${nomorBPJS}`)
         if (!response.ok) {
           throw new Error("Failed to fetch rujukan")
         }
@@ -45,9 +50,9 @@ const RujukanList: React.FC = () => {
     }
 
     fetchRujukan()
-  }, [status, router])
+  }, [status, router, nomorBPJS])
 
-  const handlePilihRujukan = async (rujukanId: number) => {
+  const handlePilihRujukan = async (rujukanId: number, poliId: number) => {
     try {
       const response = await fetch("/api/bookings/create-bpjs", {
         method: "POST",
@@ -55,21 +60,20 @@ const RujukanList: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ rujukanId }),
-      })
-
+      });
+  
       if (!response.ok) {
-        throw new Error("Failed to create booking")
+        throw new Error("Failed to create booking");
       }
-
-      const data = await response.json()
-      router.push(
-        `/bpjs/pasien-lama/belum-booking/rujukan/confirmation/${data.bookingId}`
-      )
+  
+      const data = await response.json();
+      const currentDate = new Date().toISOString().split('T')[0];
+      router.push(`/bpjs/pasien-lama/belum-booking/${nomorBPJS}/pilih-dokter?poli_id=${poliId}&tanggal=${currentDate}&bookingId=${data.bookingId}`);
     } catch (err) {
-      setError("Terjadi kesalahan saat membuat booking")
-      console.error(err)
+      setError("Terjadi kesalahan saat membuat booking");
+      console.error(err);
     }
-  }
+  };
 
   if (isLoading) {
     return <Spinner />
@@ -108,7 +112,7 @@ const RujukanList: React.FC = () => {
                 <p>{r.poli}</p>
               </div>
               <Button
-              onClick={() => handlePilihRujukan(r.id)}
+              onClick={() => handlePilihRujukan(r.id, r.poli_id)}
               variant="primary"
             >
               Pilih

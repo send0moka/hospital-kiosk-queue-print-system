@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
-const BPJSRujukanPage = () => {
+const BPJSRujukanPage = ({ params }: { params: { nomorBPJS: string } }) => {
   const { data: session, status } = useSession()
   const router = useRouter()
 
@@ -45,7 +45,7 @@ const BPJSRujukanPage = () => {
         </p>
       </div>
       </div>
-      <RujukanList />
+      <RujukanList nomorBPJS={params.nomorBPJS} />
     </Layout>
   )
 }
