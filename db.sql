@@ -1,6 +1,6 @@
 -- Membuat database
-CREATE DATABASE IF NOT EXISTS rsuelisabethpwt;
-USE rsuelisabethpwt;
+CREATE DATABASE IF NOT EXISTS db;
+USE db;
 
 -- Tabel Pasien
 CREATE TABLE IF NOT EXISTS pasien (
@@ -68,11 +68,22 @@ CREATE TABLE IF NOT EXISTS booking (
     poli_id INT,
     dokter_id INT,
     rujukan_id INT,
-    status ENUM('Menunggu', 'Selesai', 'Batal') DEFAULT 'Menunggu',
+    jadwal_dokter_id INT,
+    status ENUM('Menunggu', 'Selesai', 'Batal', 'Terkonfirmasi') DEFAULT 'Menunggu',
     FOREIGN KEY (pasien_id) REFERENCES pasien(id),
     FOREIGN KEY (poli_id) REFERENCES poli(id),
     FOREIGN KEY (dokter_id) REFERENCES dokter(id),
-    FOREIGN KEY (rujukan_id) REFERENCES rujukan(id)
+    FOREIGN KEY (rujukan_id) REFERENCES rujukan(id),
+    FOREIGN KEY (jadwal_dokter_id) REFERENCES jadwal_dokter(id)
+);
+
+CREATE TABLE IF NOT EXISTS antrian (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_id INT,
+    nomor_antrian VARCHAR(3) NOT NULL,
+    created_at DATE DEFAULT (CURRENT_DATE),
+    FOREIGN KEY (booking_id) REFERENCES booking(id),
+    UNIQUE KEY (created_at, nomor_antrian)
 );
 
 -- Insert data pasien
@@ -397,8 +408,8 @@ INSERT INTO jadwal_dokter (dokter_id, poli_id, hari, jam_mulai, jam_selesai, lay
 (35, 13, 'Jumat', '15:00:00', '17:00:00', 'Semua'),
 
 -- ini dummy
-(36, 14, 'Minggu', '14:00:00', '17:00:00', 'Semua'),
-(36, 14, 'Minggu', '19:00:00', '21:00:00', 'Semua'),
+(36, 14, 'Senin', '08:00:00', '11:00:00', 'Semua'),
+(36, 14, 'Senin', '13:00:00', '21:00:00', 'Semua'),
 
 (36, 14, 'Selasa', '10:00:00', '12:00:00', 'Semua'),
 (36, 14, 'Kamis', '10:00:00', '12:00:00', 'Semua'),
@@ -431,7 +442,7 @@ INSERT INTO rujukan (pasien_id, nomor_rujukan, tanggal_rujukan, faskes_perujuk, 
 (7, 'RJK005', '2024-07-18', 'Puskesmas Bahagia', 'Sakit Tenggorokan', 14),
 (7, 'RJK006', '2024-07-25', 'Puskesmas Bahagia', 'Gangguan Pencernaan', 5);
 
-INSERT INTO booking (kode_booking, pasien_id, tanggal_booking, jam_booking, jenis_layanan, poli_id, dokter_id, rujukan_id, status) VALUES
+INSERT INTO booking (kode_booking, pasien_id, tanggal_booking, jam_booking, jenis_layanan, poli_id, dokter_id, rujukan_id, jadwal_dokter_id, status) VALUES
 -- Pasien BPJS sudah booking
 ('ABC123', 1, '2024-07-21', '11:00:00', 'BPJS', 5, 17, 1, 'Menunggu'),
 ('DEF456', 2, '2024-07-21', '11:00:00', 'BPJS', 5, 17, NULL, 'Menunggu'),
@@ -442,3 +453,10 @@ INSERT INTO booking (kode_booking, pasien_id, tanggal_booking, jam_booking, jeni
 ('PQR678', 11, '2024-07-25', '09:00:00', 'Umum', 3, 15, NULL, 'Menunggu'),
 ('STU901', 12, '2024-07-26', '10:30:00', 'Umum', 6, 21, NULL, 'Menunggu'),
 ('VWX234', 13, '2024-07-27', '11:15:00', 'Umum', 7, 25, NULL, 'Menunggu');
+
+INSERT INTO antrian (booking_id, nomor_antrian, created_at) VALUES
+(1, '001', '2024-07-21'),
+(2, '002', '2024-07-21'),
+(3, '003', '2024-07-21'),
+(4, '001', '2024-07-22'),
+(5, '002', '2024-07-22');

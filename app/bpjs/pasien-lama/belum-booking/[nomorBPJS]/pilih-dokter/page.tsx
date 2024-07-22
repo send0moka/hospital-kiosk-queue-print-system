@@ -95,6 +95,10 @@ export default function PilihDokter() {
           <p className="bg-Belum Booking h-fit px-6 py-2 rounded-full font-bold tracking-wide">
             Belum Booking
           </p>
+          |
+          <p className="bg-Rujukan h-fit px-6 py-2 rounded-full font-bold tracking-wide">
+            Rujukan
+          </p>
         </div>
       </div>
 
