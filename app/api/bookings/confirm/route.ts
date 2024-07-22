@@ -13,11 +13,6 @@ export async function POST(req: Request) {
 
     const { bookingId, jadwalDokterId } = await req.json()
 
-    // Update booking dengan jadwal yang dipilih
-    // await executeQuery(
-    //   `UPDATE booking SET jadwal_dokter_id = ?, status = 'Terkonfirmasi' WHERE id = ? AND pasien_id = ?`,
-    //   [jadwalDokterId, bookingId, session.user.id]
-    // )
     await executeQuery(
       `UPDATE booking b
        JOIN jadwal_dokter jd ON jd.id = ?

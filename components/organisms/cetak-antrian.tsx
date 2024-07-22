@@ -7,7 +7,33 @@ export default function CetakAntrianClient({ antrian }: { antrian: any }) {
   const router = useRouter()
 
   const handlePrint = () => {
-    router.push('/bpjs/pasien-lama/sukses')
+    const receiptContent = document.getElementById('receipt')?.innerHTML
+    if (receiptContent) {
+      const printWindow = window.open('', '_blank')
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Cetak Antrian</title>
+              <style>
+                body { font-family: Arial, sans-serif; }
+                .print-content { text-align: center; padding: 20px; }
+              </style>
+            </head>
+            <body>
+              <div class="print-content">${receiptContent}</div>
+            </body>
+          </html>
+        `)
+        printWindow.document.close()
+        printWindow.focus()
+        printWindow.print()
+        printWindow.onafterprint = () => {
+          printWindow.close()
+          router.push('/bpjs/pasien-lama/sukses')
+        }
+      }
+    }
   }
 
   return (

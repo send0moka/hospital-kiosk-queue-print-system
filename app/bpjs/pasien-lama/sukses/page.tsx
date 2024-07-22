@@ -7,9 +7,8 @@ export default function SuksesPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      window.print();
-      router.push('/'); // ganti '/' dengan halaman tujuan setelah sukses dan print selesai
-    }, 1000);
+      router.push('/'); // ganti '/' dengan halaman tujuan setelah sukses
+    }, 3000); // Menunggu 3 detik sebelum redirect
     
     return () => clearTimeout(timer);
   }, [router]);
@@ -17,7 +16,7 @@ export default function SuksesPage() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-4xl font-bold mb-4">Sukses!</h1>
-      <p>Anda akan segera diarahkan ke halaman utama setelah pencetakan selesai.</p>
+      <p>Antrian Anda telah dicetak. Anda akan diarahkan ke halaman utama dalam beberapa detik.</p>
     </div>
   );
 }
