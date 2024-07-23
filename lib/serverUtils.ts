@@ -84,11 +84,11 @@ export async function searchUmumPatient(nomorRekamMedis: string) {
 export async function getPatientDataByBPJS(nomorBpjs: string) {
   try {
     const result = await executeQuery(
-      `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, d.nama AS dokter_nama
+      `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, d.nama AS dokter_nama, b.id AS booking_id, jd.id AS jadwal_dokter_id
        FROM pasien p
        JOIN booking b ON p.id = b.pasien_id
        JOIN poli po ON b.poli_id = po.id
-       JOIN jadwal_dokter jd ON b.poli_id = jd.poli_id
+       JOIN jadwal_dokter jd ON b.jadwal_dokter_id = jd.id
        JOIN dokter d ON jd.dokter_id = d.id
        WHERE p.nomor_bpjs = ? AND b.jenis_layanan = 'BPJS'
        ORDER BY b.tanggal_booking DESC, b.jam_booking DESC

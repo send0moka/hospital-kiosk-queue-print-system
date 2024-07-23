@@ -407,10 +407,6 @@ INSERT INTO jadwal_dokter (dokter_id, poli_id, hari, jam_mulai, jam_selesai, lay
 (35, 13, 'Kamis', '08:00:00', '10:00:00', 'Semua'),
 (35, 13, 'Jumat', '15:00:00', '17:00:00', 'Semua'),
 
--- ini dummy
-(36, 14, 'Senin', '08:00:00', '11:00:00', 'Semua'),
-(36, 14, 'Senin', '13:00:00', '21:00:00', 'Semua'),
-
 (36, 14, 'Selasa', '10:00:00', '12:00:00', 'Semua'),
 (36, 14, 'Kamis', '10:00:00', '12:00:00', 'Semua'),
 (36, 14, 'Jumat', '13:00:00', '15:00:00', 'Umum'),
@@ -444,19 +440,12 @@ INSERT INTO rujukan (pasien_id, nomor_rujukan, tanggal_rujukan, faskes_perujuk, 
 
 INSERT INTO booking (kode_booking, pasien_id, tanggal_booking, jam_booking, jenis_layanan, poli_id, dokter_id, rujukan_id, jadwal_dokter_id, status) VALUES
 -- Pasien BPJS sudah booking
-('ABC123', 1, '2024-07-21', '11:00:00', 'BPJS', 5, 17, 1, 'Menunggu'),
-('DEF456', 2, '2024-07-21', '11:00:00', 'BPJS', 5, 17, NULL, 'Menunggu'),
-('GHI789', 5, '2024-07-21', '11:00:00', 'BPJS', 10, 29, 4, 'Menunggu'),
+('ABC123', 1, '2024-07-21', '11:00:00', 'BPJS', 5, 17, 1, 101, 'Menunggu'),
+('DEF456', 2, '2024-07-21', '11:00:00', 'BPJS', 5, 17, NULL, 101, 'Menunggu'),
+('GHI789', 5, '2024-07-21', '11:00:00', 'BPJS', 10, 29, 4, 163, 'Menunggu'),
 -- Pasien Umum sudah booking
-('JKL012', 9, '2024-07-23', '13:00:00', 'Umum', 1, 1, NULL, 'Menunggu'),
-('MNO345', 10, '2024-07-24', '14:00:00', 'Umum', 2, 12, NULL, 'Menunggu'),
-('PQR678', 11, '2024-07-25', '09:00:00', 'Umum', 3, 15, NULL, 'Menunggu'),
-('STU901', 12, '2024-07-26', '10:30:00', 'Umum', 6, 21, NULL, 'Menunggu'),
-('VWX234', 13, '2024-07-27', '11:15:00', 'Umum', 7, 25, NULL, 'Menunggu');
-
-INSERT INTO antrian (booking_id, nomor_antrian, created_at) VALUES
-(1, '001', '2024-07-21'),
-(2, '002', '2024-07-21'),
-(3, '003', '2024-07-21'),
-(4, '001', '2024-07-22'),
-(5, '002', '2024-07-22');
+('JKL012', 9, '2024-07-23', '13:00:00', 'Umum', 1, 1, NULL, 2, 'Menunggu'),
+('MNO345', 10, '2024-07-24', '14:00:00', 'Umum', 2, 12, NULL, 80, 'Menunggu'),
+('PQR678', 11, '2024-07-25', '09:00:00', 'Umum', 3, 15, NULL, 94, 'Menunggu'),
+('STU901', 12, '2024-07-26', '10:30:00', 'Umum', 6, 21, NULL, 125, 'Menunggu'),
+('VWX234', 13, '2024-07-25', '11:15:00', 'Umum', 7, 25, NULL, 145, 'Menunggu');
