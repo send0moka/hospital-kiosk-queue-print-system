@@ -44,6 +44,7 @@ export const authOptions = {
         session.user.fingerprint_status = token.fingerprint_status
         session.user.bpjs_status = token.bpjs_status
       }
+      console.log("Session callback called. Session:", session);
       return session
     },
     async jwt({ token, user }: { token: any; user: any }) {
