@@ -1,10 +1,9 @@
 "use client"
-
 import { useRouter, useParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { Layout } from "@/components/organisms"
 import { DokterCard } from "@/components/molecules"
-import { createSlug } from "@/lib/utils"
+import { useSession } from "next-auth/react"
 
 interface Dokter {
   id: number
@@ -18,19 +17,19 @@ const PilihDokter = () => {
   const params = useParams()
   const [dokterList, setDokterList] = useState<Dokter[]>([])
   const [error, setError] = useState<string | null>(null)
-
-  // Add this at the top of your component, after the useState declarations
+  const { data: session, status } = useSession()
+  console.log("Session in PilihDokter:", session)
+  console.log("Session status:", status)
   const fetchDokterList = useCallback(async () => {
     try {
       const poliSlug = params.namaPoli as string;
+      console.log('Fetching poli ID with slug:', poliSlug);
       const poliId = await getPoliId(poliSlug);
       if (!poliId) {
         setError("Poli tidak ditemukan");
         return;
       }
-      const today = new Date().toISOString().split('T')[0];
-      const jenis_layanan = 'Umum'; // atau 'BPJS' tergantung konteks
-      const response = await fetch(`/api/dokter/list?poli_id=${poliId}&tanggal=${today}&jenis_layanan=${jenis_layanan}`);
+      const response = await fetch(`/api/dokter/list-by-poli?poli_id=${poliId}`);
       const data = await response.json();
       setDokterList(data);
     } catch (error) {
@@ -38,11 +37,9 @@ const PilihDokter = () => {
       setError("Gagal mengambil daftar dokter");
     }
   }, [params.namaPoli]);
-
   useEffect(() => {
     fetchDokterList()
   }, [params.namaPoli, fetchDokterList])
-
   const getPoliId = async (poliSlug: string) => {
     try {
       const response = await fetch(`/api/poli/get-id?slug=${encodeURIComponent(poliSlug)}`);
@@ -56,11 +53,9 @@ const PilihDokter = () => {
       return null;
     }
   }
-
   const handleDokterSelection = (dokterId: number) => {
-    router.push(`/umum/pasien-lama/belum-booking/${params.nomorRM}/konfirmasi?dokter=${dokterId}&poli=${params.namaPoli}`)
+    router.push(`/umum/pasien-lama/belum-booking/${params.nomorRM}/pilih-jadwal?dokterId=${dokterId}&poli=${params.namaPoli}`)
   }
-
   return (
     <Layout>
       <div className="flex justify-between">

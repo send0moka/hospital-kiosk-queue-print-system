@@ -1,5 +1,4 @@
 "use client"
-
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 
@@ -19,11 +18,9 @@ const Option: React.FC<OptionProps> = ({
   className,
 }) => {
   const router = useRouter()
-
   const handleClick = () => {
     router.push(redirect)
   }
-
   return (
     <div
       onClick={handleClick}

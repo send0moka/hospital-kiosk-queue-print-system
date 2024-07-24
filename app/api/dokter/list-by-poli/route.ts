@@ -4,11 +4,9 @@ import { executeQuery } from "@/lib/utils"
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const poliId = searchParams.get('poli_id')
-
   if (!poliId) {
     return NextResponse.json({ error: "Poli ID is required" }, { status: 400 })
   }
-
   try {
     const dokterList = await executeQuery(`
       SELECT DISTINCT d.id, d.nama, d.foto, d.spesialisasi
