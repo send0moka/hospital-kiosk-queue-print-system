@@ -1,12 +1,11 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { executeQuery } from "@/lib/utils"
-import { searchBPJSPatient, searchUmumPatient } from "@/lib/serverUtils"
+import { searchBPJSPatient } from "@/lib/serverUtils"
 
 export const authOptions = {
   providers: [
     CredentialsProvider({
-      id: 'bpjs-credentials',
       name: "BPJS",
       credentials: {
         nomor_bpjs: { label: "Nomor BPJS", type: "text" },
@@ -28,34 +27,6 @@ export const authOptions = {
             nomor_bpjs: patient.nomor_bpjs,
             fingerprint_status: patient.fingerprint_status,
             bpjs_status: patient.bpjs_status,
-            patientType: "BPJS",
-          }
-        }
-        return null
-      },
-    }),
-    CredentialsProvider({
-      id: 'umum-credentials',
-      name: "Umum",
-      credentials: {
-        nomor_rekam_medis: { label: "Nomor Rekam Medis", type: "text" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.nomor_rekam_medis) {
-          return null
-        }
-        console.log(
-          "Searching for Umum patient with nomor_rekam_medis:",
-          credentials.nomor_rekam_medis
-        )
-        const patient = await searchUmumPatient(credentials.nomor_rekam_medis)
-        console.log("Search result:", patient)
-        if (patient) {
-          return {
-            id: patient.id,
-            name: patient.nama,
-            nomor_rekam_medis: patient.nomor_rekam_medis,
-            patientType: "Umum",
           }
         }
         return null
@@ -67,10 +38,8 @@ export const authOptions = {
       if (token) {
         session.user.id = token.sub
         session.user.nomor_bpjs = token.nomor_bpjs
-        session.user.nomor_rekam_medis = token.nomor_rekam_medis
         session.user.fingerprint_status = token.fingerprint_status
         session.user.bpjs_status = token.bpjs_status
-        session.user.patientType = token.patientType
       }
       console.log("Session callback called. Session:", session);
       return session
@@ -78,16 +47,14 @@ export const authOptions = {
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.nomor_bpjs = user.nomor_bpjs
-        token.nomor_rekam_medis = user.nomor_rekam_medis
         token.fingerprint_status = user.fingerprint_status
         token.bpjs_status = user.bpjs_status
-        token.patientType = user.patientType
       }
       return token
     },
   },
   pages: {
-    signIn: "/auth/signin",
+    signIn: "/bpjs/pasien-lama/belum-booking",
   },
   secret: process.env.NEXTAUTH_SECRET,
 }

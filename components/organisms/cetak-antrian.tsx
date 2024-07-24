@@ -5,7 +5,6 @@ import Image from "next/image"
 
 export default function CetakAntrianClient({ antrian }: { antrian: any }) {
   const router = useRouter()
-
   const handlePrint = () => {
     const receiptContent = document.getElementById('receipt')?.innerHTML
     if (receiptContent) {
@@ -30,12 +29,14 @@ export default function CetakAntrianClient({ antrian }: { antrian: any }) {
         printWindow.print()
         printWindow.onafterprint = () => {
           printWindow.close()
-          router.push('/bpjs/pasien-lama/sukses')
+          const successPage = antrian.jenis_pasien === 'BPJS' 
+            ? '/bpjs/pasien-lama/sukses'
+            : '/umum/pasien-lama/sukses'
+          router.push(successPage)
         }
       }
     }
   }
-
   return (
     <div className="flex flex-col gap-4 w-fit mx-auto flex-grow">
       <div id="receipt" className="text-black bg-white shadow-lg flex flex-col justify-center items-center p-8">

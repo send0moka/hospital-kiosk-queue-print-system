@@ -10,7 +10,6 @@ export async function searchUmumBooking(kodeBooking: string) {
        WHERE b.kode_booking = ? AND b.jenis_layanan = 'Umum'`,
       [kodeBooking]
     )
-
     if (Array.isArray(booking) && booking.length > 0) {
       return booking[0]
     } else {
@@ -31,7 +30,6 @@ export async function searchBPJSBooking(kodeBooking: string) {
        WHERE b.kode_booking = ? AND b.jenis_layanan = 'BPJS'`,
       [kodeBooking]
     )
-
     if (Array.isArray(booking) && booking.length > 0) {
       return booking[0]
     } else {
@@ -51,7 +49,6 @@ export async function searchBPJSPatient(nomorBPJS: string) {
       [nomorBPJS]
     )
     console.log("executeQuery result:", patient)
-
     if (Array.isArray(patient) && patient.length > 0) {
       return patient[0]
     } else {
@@ -69,7 +66,6 @@ export async function searchUmumPatient(nomorRekamMedis: string) {
       `SELECT * FROM pasien WHERE nomor_rekam_medis = ? AND id NOT IN (SELECT pasien_id FROM booking WHERE jenis_layanan = 'Umum')`,
       [nomorRekamMedis]
     )
-
     if (Array.isArray(patient) && patient.length > 0) {
       return patient[0]
     } else {
@@ -84,11 +80,11 @@ export async function searchUmumPatient(nomorRekamMedis: string) {
 export async function getPatientDataByBPJS(nomorBpjs: string) {
   try {
     const result = await executeQuery(
-      `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, d.nama AS dokter_nama
+      `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, d.nama AS dokter_nama, b.id AS booking_id, jd.id AS jadwal_dokter_id
        FROM pasien p
        JOIN booking b ON p.id = b.pasien_id
        JOIN poli po ON b.poli_id = po.id
-       JOIN jadwal_dokter jd ON b.poli_id = jd.poli_id
+       JOIN jadwal_dokter jd ON b.jadwal_dokter_id = jd.id
        JOIN dokter d ON jd.dokter_id = d.id
        WHERE p.nomor_bpjs = ? AND b.jenis_layanan = 'BPJS'
        ORDER BY b.tanggal_booking DESC, b.jam_booking DESC
@@ -98,9 +94,7 @@ export async function getPatientDataByBPJS(nomorBpjs: string) {
 
     if (Array.isArray(result) && result.length > 0) {
       const patientData = result[0];
-      // Format tanggal_booking menjadi string YYYY-MM-DD
       patientData.tanggal_booking = new Date(patientData.tanggal_booking).toISOString().split('T')[0];
-      // jam_booking sudah dalam format yang benar (HH:MM:SS)
       return patientData;
     } else {
       return null;

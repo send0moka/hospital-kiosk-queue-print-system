@@ -10,7 +10,7 @@ interface DokterCardProps {
 const DokterCard: React.FC<DokterCardProps> = ({ nama, foto, spesialisasi, onClick }) => {
   return (
     <div 
-      className="flex items-center gap-3 cursor-pointer bg-white min-w-96 pl-3 py-2 rounded-lg transition-transform hover:scale-105"
+      className="flex items-center gap-3 cursor-pointer bg-white min-w-[560px] pl-3 py-2 rounded-lg transition-transform hover:scale-105"
       onClick={onClick}
     >
         <Image 
