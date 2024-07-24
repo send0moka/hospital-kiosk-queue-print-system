@@ -91,7 +91,6 @@ export async function getPatientDataByBPJS(nomorBpjs: string) {
        LIMIT 1`,
       [nomorBpjs]
     );
-
     if (Array.isArray(result) && result.length > 0) {
       const patientData = result[0];
       patientData.tanggal_booking = new Date(patientData.tanggal_booking).toISOString().split('T')[0];

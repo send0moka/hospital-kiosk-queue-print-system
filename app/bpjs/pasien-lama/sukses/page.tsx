@@ -8,7 +8,7 @@ export default function SuksesPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push('/'); // ganti '/' dengan halaman tujuan setelah sukses
-    }, 3000); // Menunggu 3 detik sebelum redirect
+    }, 5000); // Menunggu 3 detik sebelum redirect
     
     return () => clearTimeout(timer);
   }, [router]);

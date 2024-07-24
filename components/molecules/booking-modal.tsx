@@ -1,3 +1,4 @@
+"use client"
 import React from "react"
 import {
   Dialog,
@@ -8,7 +9,9 @@ import {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  Button,
 } from "@/components/atoms"
+import { useRouter } from "next/navigation"
 
 interface BookingModalProps {
   isOpen: boolean
@@ -25,6 +28,48 @@ const BookingModal: React.FC<BookingModalProps> = ({
   error,
   type,
 }) => {
+  const router = useRouter()
+  const handleContinue = async () => {
+    if (booking) {
+      try {
+        const response = await fetch('/api/bookings/confirm-existing', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ bookingId: booking.id }),
+        })
+        const data = await response.json()
+        if (response.ok && data.antrianId) {
+          router.push(`/umum/pasien-lama/cetak-antrian/${data.antrianId}`)
+        } else {
+          console.error('Failed to confirm booking:', data.error)
+        }
+      } catch (error) {
+        console.error('Error confirming booking:', error)
+      }
+    }
+  }
+  const handleCancel = async () => {
+    if (booking) {
+      try {
+        const response = await fetch('/api/bookings/cancel', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ bookingId: booking.id }),
+        })
+        if (response.ok) {
+          router.back()
+        } else {
+          console.error('Failed to cancel booking')
+        }
+      } catch (error) {
+        console.error('Error cancelling booking:', error)
+      }
+    }
+  }
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogPortal>
@@ -58,7 +103,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
             )}
           </DialogDescription>
           <DialogFooter>
-            <button onClick={onClose}>Tutup</button>
+            {booking && (
+              <>
+                <Button variant="destructive" onClick={handleCancel}>Hapus Booking</Button>
+                <Button variant="primary" onClick={handleContinue}>Lanjut</Button>
+              </>
+            )}
           </DialogFooter>
         </DialogContent>
       </DialogPortal>
