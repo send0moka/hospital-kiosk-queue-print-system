@@ -13,11 +13,9 @@ export async function executeQuery<T>(
   if (typeof window !== "undefined") {
     throw new Error("Database queries can only be executed on the server side")
   }
-
   if (!pool) {
     throw new Error("Database connection not initialized")
   }
-
   try {
     const [results] = (await pool.query(query, values)) as unknown as [T, any]
     console.log("Database connection successful")

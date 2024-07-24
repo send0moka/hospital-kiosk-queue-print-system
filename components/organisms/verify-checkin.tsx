@@ -27,8 +27,6 @@ type PatientData = {
 export default function VerifikasiDataCheckIn({ patientData, isExistingBooking }: VerifikasiDataCheckInProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
-
-  // Format tanggal lahir
   const formatTanggalLahir = (dateString: string) => {
     const date = new Date(dateString)
     const options: Intl.DateTimeFormatOptions = {
@@ -38,18 +36,14 @@ export default function VerifikasiDataCheckIn({ patientData, isExistingBooking }
     }
     return date.toLocaleDateString("id-ID", options)
   }
-
-  // Format jadwal kunjungan
   const formatJadwalKunjungan = (dateString: any, timeString: any) => {
     if (typeof dateString !== "string" || typeof timeString !== "string") {
       console.error("Invalid date or time format:", { dateString, timeString })
       return "Format tanggal atau waktu tidak valid"
     }
-
     try {
       const [year, month, day] = dateString.split("-").map(Number)
       const [hour, minute] = timeString.split(":").map(Number)
-
       if (
         isNaN(year) ||
         isNaN(month) ||
@@ -59,13 +53,10 @@ export default function VerifikasiDataCheckIn({ patientData, isExistingBooking }
       ) {
         throw new Error("Invalid date or time components")
       }
-
       const date = new Date(year, month - 1, day, hour, minute)
-
       if (isNaN(date.getTime())) {
         throw new Error("Invalid date")
       }
-
       const timeOptions: Intl.DateTimeFormatOptions = {
         hour: "2-digit",
         minute: "2-digit",
@@ -77,29 +68,23 @@ export default function VerifikasiDataCheckIn({ patientData, isExistingBooking }
         month: "long",
         year: "numeric",
       }
-
       const time = date.toLocaleTimeString("id-ID", timeOptions)
       const formattedDate = date.toLocaleDateString("id-ID", dateOptions)
-
       return `${time} | ${formattedDate}`
     } catch (error) {
       console.error("Error formatting date:", error)
       return "Gagal memformat tanggal dan waktu"
     }
   }
-
   const handleConfirm = async () => {
     try {
       console.log('Patient data before sending:', patientData);
-
       if (isExistingBooking && (!patientData.booking_id || !patientData.jadwal_dokter_id)) {
         throw new Error("Invalid booking ID or jadwal dokter ID");
       }
-      
       const endpoint = isExistingBooking 
         ? "/api/bookings/confirm-existing"
         : "/api/bookings/confirm";
-
       const body = isExistingBooking
         ? {
             bookingId: patientData.booking_id,
@@ -110,7 +95,6 @@ export default function VerifikasiDataCheckIn({ patientData, isExistingBooking }
             bookingId: patientData.booking_id,
             jadwalDokterId: patientData.jadwal_dokter_id,
           };
-
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -119,19 +103,16 @@ export default function VerifikasiDataCheckIn({ patientData, isExistingBooking }
         body: JSON.stringify(body),
         credentials: isExistingBooking ? 'omit' : 'include',
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to confirm booking");
       }
-
       const data = await response.json();
       router.push(`/bpjs/pasien-lama/cetak-antrian/${data.antrianId}`);
     } catch (error) {
       console.error("Error confirming booking:", error);
     }
   }
-
   return (
     <Layout>
       <div className="flex justify-between">

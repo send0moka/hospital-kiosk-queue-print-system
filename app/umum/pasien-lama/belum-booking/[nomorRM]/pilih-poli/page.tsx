@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { Layout } from "@/components/organisms"
 import { PoliCard } from "@/components/molecules"
 import { createSlug } from "@/lib/utils"
+import { useSession } from "next-auth/react"
 
 interface Poli {
   id: number
@@ -18,7 +19,9 @@ const PilihPoli = () => {
   const params = useParams()
   const [identifier, setIdentifier] = useState<string | null>(null)
   const [poliList, setPoliList] = useState<Poli[]>([])
-
+  const { data: session, status } = useSession()
+  console.log("Session in PilihPoli:", session)
+  console.log("Session status:", status)
   useEffect(() => {
     if (params.nomorRM) {
       setIdentifier(params.nomorRM as string)
@@ -27,7 +30,6 @@ const PilihPoli = () => {
     }
     fetchPoliList()
   }, [params])
-
   const fetchPoliList = async () => {
     try {
       const response = await fetch("/api/poli/list")
@@ -37,7 +39,6 @@ const PilihPoli = () => {
       console.error("Error fetching poli list:", error)
     }
   }
-
   const handlePoliSelection = (poliId: number, poliNama: string) => {
     const poliSlug = createSlug(poliNama);
     if (params.nomorRM) {
@@ -46,7 +47,6 @@ const PilihPoli = () => {
       router.push(`/umum/pasien-lama/sudah-booking/${params.kodeBooking}/${poliSlug}`)
     }
   }
-
   return (
     <Layout>
       <div className="flex justify-between">

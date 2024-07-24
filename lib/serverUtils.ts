@@ -10,7 +10,6 @@ export async function searchUmumBooking(kodeBooking: string) {
        WHERE b.kode_booking = ? AND b.jenis_layanan = 'Umum'`,
       [kodeBooking]
     )
-
     if (Array.isArray(booking) && booking.length > 0) {
       return booking[0]
     } else {
@@ -31,7 +30,6 @@ export async function searchBPJSBooking(kodeBooking: string) {
        WHERE b.kode_booking = ? AND b.jenis_layanan = 'BPJS'`,
       [kodeBooking]
     )
-
     if (Array.isArray(booking) && booking.length > 0) {
       return booking[0]
     } else {
@@ -51,7 +49,6 @@ export async function searchBPJSPatient(nomorBPJS: string) {
       [nomorBPJS]
     )
     console.log("executeQuery result:", patient)
-
     if (Array.isArray(patient) && patient.length > 0) {
       return patient[0]
     } else {
@@ -69,7 +66,6 @@ export async function searchUmumPatient(nomorRekamMedis: string) {
       `SELECT * FROM pasien WHERE nomor_rekam_medis = ? AND id NOT IN (SELECT pasien_id FROM booking WHERE jenis_layanan = 'Umum')`,
       [nomorRekamMedis]
     )
-
     if (Array.isArray(patient) && patient.length > 0) {
       return patient[0]
     } else {
@@ -98,9 +94,7 @@ export async function getPatientDataByBPJS(nomorBpjs: string) {
 
     if (Array.isArray(result) && result.length > 0) {
       const patientData = result[0];
-      // Format tanggal_booking menjadi string YYYY-MM-DD
       patientData.tanggal_booking = new Date(patientData.tanggal_booking).toISOString().split('T')[0];
-      // jam_booking sudah dalam format yang benar (HH:MM:SS)
       return patientData;
     } else {
       return null;

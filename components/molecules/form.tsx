@@ -5,7 +5,7 @@ import { Search, RefreshCcw } from "lucide-react"
 import { BookingModal } from "@/components/molecules"
 import { Spinner } from "@radix-ui/themes"
 import { useRouter } from "next/navigation"
-import { signIn, useSession } from "next-auth/react"
+import { getSession, signIn, useSession } from "next-auth/react"
 import { z } from "zod"
 
 interface FormProps {
@@ -24,7 +24,6 @@ const Form: React.FC<FormProps> = ({ type }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
   const { data: session } = useSession()
-
   const getConfig = () => {
     switch (type) {
       case "bpjs-belum-booking":
@@ -53,23 +52,17 @@ const Form: React.FC<FormProps> = ({ type }) => {
         return { label: "", length: 0, type: "text", description: "" }
     }
   }
-
   const config = getConfig()
-
   const handleInputChange = (index: number, value: string) => {
     const newInputValues = [...inputValues]
     newInputValues[index] = value
-
     if (config.type === "number" && !/^\d*$/.test(value)) return
-
     setInputValues(newInputValues)
-
     if (value && index < config.length - 1) {
       const nextInput = document.getElementById(`input-${index + 1}`)
       if (nextInput) nextInput.focus()
     }
   }
-
   const handleKeyDown = (
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>
@@ -79,7 +72,6 @@ const Form: React.FC<FormProps> = ({ type }) => {
       if (prevInput) prevInput.focus()
     }
   }
-
   const validateBPJS = (inputValue: string) => {
     const bpjsSchema = z
       .string()
@@ -87,32 +79,25 @@ const Form: React.FC<FormProps> = ({ type }) => {
       .regex(/^\d+$/, "Nomor BPJS harus berupa 13 digit angka")
     return bpjsSchema.safeParse(inputValue)
   }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-
     const inputValue = inputValues.join("")
-
     if (type === "bpjs-belum-booking") {
       const validationResult = validateBPJS(inputValue)
-
       if (!validationResult.success) {
         setError(validationResult.error.errors[0].message)
         setIsLoading(false)
         return
       }
-
       try {
         console.log("Attempting to sign in with BPJS number:", inputValue)
-        const result = await signIn("credentials", {
+        const result = await signIn("bpjs-credentials", {
           nomor_bpjs: inputValue,
           redirect: false,
         })
-
         console.log("Sign in result:", result)
-
         if (result?.error) {
           setError("Nomor BPJS tidak valid")
         } else {
@@ -124,8 +109,28 @@ const Form: React.FC<FormProps> = ({ type }) => {
         setIsLoading(false)
       }
       return
+    } else if (type === "umum-belum-booking") {
+      try {
+        console.log("Attempting to sign in with nomor rekam medis:", inputValue)
+        const result = await signIn("umum-credentials", {
+          nomor_rekam_medis: inputValue,
+          redirect: false,
+        })
+        console.log("Sign in result:", result)
+        if (result?.error) {
+          setError("Nomor rekam medis tidak valid")
+        } else {
+          const session = await getSession()
+          console.log("Session after sign in:", session)
+          router.push(`/umum/pasien-lama/belum-booking/${inputValue}/pilih-poli`)
+        }
+      } catch (error) {
+        setError("Terjadi kesalahan saat verifikasi")
+      } finally {
+        setIsLoading(false)
+      }
+      return
     }
-
     try {
       let endpoint
       switch (type) {
@@ -135,26 +140,18 @@ const Form: React.FC<FormProps> = ({ type }) => {
         case "umum-sudah-booking":
           endpoint = `/api/bookings/search-umum?kode=${inputValue}`
           break
-        case "umum-belum-booking":
-          endpoint = `/api/patients/search-umum?nomor=${inputValue}`
-          break
       }
-
       const response = await fetch(endpoint)
       const data = await response.json()
-
       if (!response.ok) {
         throw new Error(data.error || "Terjadi kesalahan")
       }
-
       if (data.redirect) {
         return router.push(data.redirect)
       } else if (type === "bpjs-sudah-booking" && data.nomor_bpjs) {
         router.push(`/bpjs/pasien-lama/sudah-booking/${data.nomor_bpjs}`)
       } else if (type === "umum-sudah-booking" && data.kode_booking) {
         router.push(`/umum/pasien-lama/sudah-booking/${data.kode_booking}/poli`)
-      } else if (type === "umum-belum-booking" && data.nomor_rekam_medis) {
-        router.push(`/umum/pasien-lama/belum-booking/${data.nomor_rekam_medis}/poli`)
       } else {
         setBookingData(data)
         setIsModalOpen(true)
@@ -167,18 +164,15 @@ const Form: React.FC<FormProps> = ({ type }) => {
       setIsLoading(false)
     }
   }
-
   const handleReset = () => {
     window.location.reload()
   }
-
   const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
     event.preventDefault()
     const pastedText = event.clipboardData.getData("text")
     const sanitizedText = pastedText
       .replace(/[^a-zA-Z0-9]/g, "")
       .slice(0, config.length)
-
     const newInputValues = [...inputValues]
     for (let i = 0; i < sanitizedText.length; i++) {
       if (i < config.length) {
@@ -186,8 +180,6 @@ const Form: React.FC<FormProps> = ({ type }) => {
       }
     }
     setInputValues(newInputValues)
-
-    // Focus on the next empty input or the last input
     const nextEmptyIndex = newInputValues.findIndex((value) => !value)
     const nextInputId =
       nextEmptyIndex !== -1
@@ -198,7 +190,6 @@ const Form: React.FC<FormProps> = ({ type }) => {
       nextInput.focus()
     }
   }
-
   return (
     <>
       <form
