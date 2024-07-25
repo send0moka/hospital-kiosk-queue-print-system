@@ -22,8 +22,16 @@ export const authOptions = {
         const patient = await searchBPJSPatient(credentials.nomor_bpjs)
         console.log("Search result:", patient)
         if (patient) {
+          console.log("Patient found. BPJS status:", patient.bpjs_status);
+          console.log("Fingerprint status:", patient.fingerprint_status);
+          if (!patient.fingerprint_status) {
+            throw new Error('FINGERPRINT_NOT_REGISTERED');
+          }
+          if (patient.bpjs_status !== true && patient.bpjs_status !== 1) {
+            throw new Error('BPJS_NOT_ACTIVE');
+          }
           return {
-            id: patient.id,
+            id: patient.id.toString(),
             name: patient.nama,
             nomor_bpjs: patient.nomor_bpjs,
             fingerprint_status: patient.fingerprint_status,
