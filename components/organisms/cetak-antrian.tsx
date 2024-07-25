@@ -2,9 +2,27 @@
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/atoms"
 import Image from "next/image"
+import { useEffect } from 'react'
 
 export default function CetakAntrianClient({ antrian }: { antrian: any }) {
   const router = useRouter()
+  useEffect(() => {
+    const updateBookingStatus = async () => {
+      try {
+        const response = await fetch('/api/bookings/update-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bookingId: antrian.booking_id, status: 'Selesai' })
+        })
+        if (!response.ok) {
+          throw new Error('Failed to update booking status')
+        }
+      } catch (error) {
+        console.error('Error updating booking status:', error)
+      }
+    }
+    updateBookingStatus()
+  }, [antrian.booking_id])
   const handlePrint = () => {
     const receiptContent = document.getElementById('receipt')?.innerHTML
     if (receiptContent) {
