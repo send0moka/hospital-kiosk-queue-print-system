@@ -48,9 +48,16 @@ export async function searchBPJSPatient(nomorBPJS: string) {
       `SELECT *, fingerprint_status, bpjs_status FROM pasien WHERE nomor_bpjs = ? AND id NOT IN (SELECT pasien_id FROM booking WHERE jenis_layanan = 'BPJS')`,
       [nomorBPJS]
     )
+    console.log("Raw patient data:", patient)
     console.log("executeQuery result:", patient)
     if (Array.isArray(patient) && patient.length > 0) {
-      return patient[0]
+      const result = {
+        ...patient[0],
+        bpjs_status: patient[0].bpjs_status === 1 || patient[0].bpjs_status === true,
+        fingerprint_status: patient[0].fingerprint_status === 1 || patient[0].fingerprint_status === true
+      };
+      console.log("Processed patient data:", result);
+      return result;
     } else {
       return null
     }

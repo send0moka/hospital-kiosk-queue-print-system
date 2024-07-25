@@ -11,14 +11,21 @@ export async function GET(req: Request) {
 
   try {
     const patient = await searchBPJSPatient(nomorBPJS)
+    console.log("Patient data in route handler:", patient)
     if (patient) {
-      if (patient.fingerprint_status) {
-        if (patient.bpjs_status) {
+      console.log("Fingerprint status:", patient.fingerprint_status)
+      console.log("BPJS status:", patient.bpjs_status)
+      console.log("BPJS status type:", typeof patient.bpjs_status)
+      if (patient.fingerprint_status === true) {
+        if (patient.bpjs_status === true) {
+          console.log("Redirecting to rujukan")
           return NextResponse.json({ redirect: "/bpjs/pasien-lama/belum-booking/rujukan" })
         } else {
+          console.log("Redirecting to aktivasi")
           return NextResponse.json({ redirect: "/aktivasi" })
         }
       } else {
+        console.log("Redirecting to fingerprint")
         return NextResponse.json({ redirect: "/fingerprint" })
       }
     } else {

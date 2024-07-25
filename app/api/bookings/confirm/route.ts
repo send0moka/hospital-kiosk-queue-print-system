@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     await executeQuery(
       `UPDATE booking b
        JOIN jadwal_dokter jd ON jd.id = ?
-       SET b.jadwal_dokter_id = ?, b.dokter_id = jd.dokter_id, b.status = 'Terkonfirmasi'
+       SET b.jadwal_dokter_id = ?, b.dokter_id = jd.dokter_id, b.status = 'Selesai'
        WHERE b.id = ? AND b.pasien_id = ?`,
       [jadwalDokterId, jadwalDokterId, bookingId, session.user.id]
     )
