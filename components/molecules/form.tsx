@@ -7,6 +7,7 @@ import { Spinner } from "@radix-ui/themes"
 import { useRouter } from "next/navigation"
 import { getSession, signIn, useSession } from "next-auth/react"
 import { z } from "zod"
+import { Session } from "next-auth"
 
 interface FormProps {
   type:
@@ -99,11 +100,24 @@ const Form: React.FC<FormProps> = ({ type }) => {
         })
         console.log("Sign in result:", result)
         if (result?.error) {
-          setError("Nomor BPJS tidak valid")
-        } else {
-          router.push(`/bpjs/pasien-lama/belum-booking/${inputValue}/rujukan`)
+          if (result.error === 'FINGERPRINT_NOT_REGISTERED') {
+            router.push("/fingerprint")
+          } else if (result.error === 'BPJS_NOT_ACTIVE') {
+            router.push("/aktivasi")
+          } else {
+            setError("Nomor BPJS tidak valid")
+          }
+        } else if (result?.ok) {
+          const session = await getSession() as Session | null
+          console.log("Session after sign in:", session);
+          if (session?.user?.bpjs_status === true) {
+            router.push(`/bpjs/pasien-lama/belum-booking/${inputValue}/rujukan`);
+          } else {
+            router.push("/aktivasi");
+          }
         }
       } catch (error) {
+        console.error("Error during sign in:", error)
         setError("Terjadi kesalahan saat verifikasi")
       } finally {
         setIsLoading(false)
@@ -150,9 +164,7 @@ const Form: React.FC<FormProps> = ({ type }) => {
         return router.push(data.redirect)
       } else if (type === "bpjs-sudah-booking" && data.nomor_bpjs) {
         router.push(`/bpjs/pasien-lama/sudah-booking/${data.nomor_bpjs}`)
-      } else if (type === "umum-sudah-booking" && data.kode_booking) {
-        router.push(`/umum/pasien-lama/sudah-booking/${data.kode_booking}/poli`)
-      } else {
+      } else if (type === "umum-sudah-booking") {
         setBookingData(data)
         setIsModalOpen(true)
       }
