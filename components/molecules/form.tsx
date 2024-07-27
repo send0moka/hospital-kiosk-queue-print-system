@@ -100,20 +100,20 @@ const Form: React.FC<FormProps> = ({ type }) => {
         })
         console.log("Sign in result:", result)
         if (result?.error) {
-          if (result.error === 'FINGERPRINT_NOT_REGISTERED') {
+          if (result.error === "FINGERPRINT_NOT_REGISTERED") {
             router.push("/fingerprint")
-          } else if (result.error === 'BPJS_NOT_ACTIVE') {
+          } else if (result.error === "BPJS_NOT_ACTIVE") {
             router.push("/aktivasi")
           } else {
             setError("Nomor BPJS tidak valid")
           }
         } else if (result?.ok) {
-          const session = await getSession() as Session | null
-          console.log("Session after sign in:", session);
+          const session = (await getSession()) as Session | null
+          console.log("Session after sign in:", session)
           if (session?.user?.bpjs_status === true) {
-            router.push(`/bpjs/pasien-lama/belum-booking/${inputValue}/rujukan`);
+            router.push(`/bpjs/pasien-lama/belum-booking/${inputValue}/rujukan`)
           } else {
-            router.push("/aktivasi");
+            router.push("/aktivasi")
           }
         }
       } catch (error) {
@@ -136,7 +136,9 @@ const Form: React.FC<FormProps> = ({ type }) => {
         } else {
           const session = await getSession()
           console.log("Session after sign in:", session)
-          router.push(`/umum/pasien-lama/belum-booking/${inputValue}/pilih-poli`)
+          router.push(
+            `/umum/pasien-lama/belum-booking/${inputValue}/pilih-poli`
+          )
         }
       } catch (error) {
         setError("Terjadi kesalahan saat verifikasi")
@@ -162,8 +164,16 @@ const Form: React.FC<FormProps> = ({ type }) => {
       }
       if (data.redirect) {
         return router.push(data.redirect)
-      } else if (type === "bpjs-sudah-booking" && data.nomor_bpjs) {
-        router.push(`/bpjs/pasien-lama/sudah-booking/${data.nomor_bpjs}`)
+      } else if (type === "bpjs-sudah-booking") {
+        console.log("Data received:", data)
+        if (data && data.kode_booking) {
+          const url = `/bpjs/pasien-lama/sudah-booking/${data.kode_booking}`
+          console.log("Navigating to:", url)
+          router.push(url)
+        } else {
+          console.error("kode_booking is undefined in the response")
+          setError("Kode booking tidak ditemukan dalam respons")
+        }
       } else if (type === "umum-sudah-booking") {
         setBookingData(data)
         setIsModalOpen(true)

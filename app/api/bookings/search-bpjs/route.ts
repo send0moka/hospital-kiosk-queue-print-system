@@ -19,7 +19,7 @@ export async function GET(req: Request) {
           { status: 400 }
         )  
       } else if (booking.fingerprint_status) {
-        return NextResponse.json({ nomor_bpjs: booking.nomor_bpjs })
+        return NextResponse.json({ kode_booking: booking.kode_booking })
       } else {
         return NextResponse.json({ redirect: "/fingerprint" })
       }
