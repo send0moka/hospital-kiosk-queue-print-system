@@ -83,25 +83,42 @@ export async function searchUmumPatient(nomorRekamMedis: string) {
   }
 }
 
-export async function getPatientDataByBPJS(nomorBpjs: string) {
+export async function getPatientDataByBooking(kodeBooking: string) {
+  console.log("getPatientDataByBooking called with:", kodeBooking);
+  if (!kodeBooking) {
+    console.error("kodeBooking is undefined in getPatientDataByBooking");
+    return null;
+  }
+
   try {
     const result = await executeQuery(
-      `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, d.nama AS dokter_nama, b.id AS booking_id, jd.id AS jadwal_dokter_id
-       FROM pasien p
-       JOIN booking b ON p.id = b.pasien_id
+      // `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, d.nama AS dokter_nama, b.id AS booking_id, jd.id AS jadwal_dokter_id, b.kode_booking
+      //  FROM booking b 
+      //  JOIN pasien p ON b.pasien_id = p.id
+      //  JOIN poli po ON b.poli_id = po.id
+      //  JOIN jadwal_dokter jd ON b.jadwal_dokter_id = jd.id
+      //  JOIN dokter d ON jd.dokter_id = d.id
+      //  WHERE b.kode_booking = ? AND b.jenis_layanan = 'BPJS'
+      //  LIMIT 1`,
+      `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, 
+              b.id AS booking_id, b.kode_booking,
+              jd.id AS jadwal_dokter_id, d.nama AS dokter_nama
+       FROM booking b 
+       JOIN pasien p ON b.pasien_id = p.id
        JOIN poli po ON b.poli_id = po.id
-       JOIN jadwal_dokter jd ON b.jadwal_dokter_id = jd.id
-       JOIN dokter d ON jd.dokter_id = d.id
-       WHERE p.nomor_bpjs = ? AND b.jenis_layanan = 'BPJS'
-       ORDER BY b.tanggal_booking DESC, b.jam_booking DESC
+       LEFT JOIN jadwal_dokter jd ON b.jadwal_dokter_id = jd.id
+       LEFT JOIN dokter d ON jd.dokter_id = d.id
+       WHERE b.kode_booking = ? AND b.jenis_layanan = 'BPJS'
        LIMIT 1`,
-      [nomorBpjs]
+      [kodeBooking]
     );
+    console.log("Query result:", result);
     if (Array.isArray(result) && result.length > 0) {
       const patientData = result[0];
       patientData.tanggal_booking = new Date(patientData.tanggal_booking).toISOString().split('T')[0];
       return patientData;
     } else {
+      console.log("No patient data found for kodeBooking:", kodeBooking);
       return null;
     }
   } catch (error) {

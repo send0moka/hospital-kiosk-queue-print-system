@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     )
     let newAntrianNumber = 1
     if (lastAntrian && lastAntrian.last_number) {
-      newAntrianNumber = lastAntrian.last_number + 1
+      newAntrianNumber = parseInt(lastAntrian.last_number, 10) + 1
     }
     const formattedAntrianNumber = newAntrianNumber.toString().padStart(3, "0")
     const { insertId: antrianId } = await executeQuery<any>(
