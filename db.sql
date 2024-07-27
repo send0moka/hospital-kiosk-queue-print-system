@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS pasien (
     jenis_kelamin ENUM('L', 'P') NOT NULL,
     alamat TEXT,
     nomor_telepon VARCHAR(15),
-    nomor_bpjs VARCHAR(13),kenapa 
+    nomor_bpjs VARCHAR(13), 
     fingerprint_status BOOLEAN DEFAULT FALSE,
     bpjs_status BOOLEAN DEFAULT FALSE
 );

@@ -2,10 +2,12 @@
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/atoms"
 import Image from "next/image"
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function CetakAntrianClient({ antrian }: { antrian: any }) {
   const router = useRouter()
+  const [isPrinting, setIsPrinting] = useState(false)
+
   useEffect(() => {
     const updateBookingStatus = async () => {
       try {
@@ -23,36 +25,27 @@ export default function CetakAntrianClient({ antrian }: { antrian: any }) {
     }
     updateBookingStatus()
   }, [antrian.booking_id])
-  const handlePrint = () => {
-    const receiptContent = document.getElementById('receipt')?.innerHTML
-    if (receiptContent) {
-      const printWindow = window.open('', '_blank')
-      if (printWindow) {
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>Cetak Antrian</title>
-              <style>
-                body { font-family: Arial, sans-serif; }
-                .print-content { text-align: center; padding: 20px; }
-              </style>
-            </head>
-            <body>
-              <div class="print-content">${receiptContent}</div>
-            </body>
-          </html>
-        `)
-        printWindow.document.close()
-        printWindow.focus()
-        printWindow.print()
-        printWindow.onafterprint = () => {
-          printWindow.close()
-          const successPage = antrian.jenis_pasien === 'BPJS' 
-            ? '/bpjs/pasien-lama/sukses'
-            : '/umum/pasien-lama/sukses'
-          router.push(successPage)
-        }
+
+  const handlePrint = async () => {
+    setIsPrinting(true)
+    try {
+      const response = await fetch('/api/print', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ antrian })
+      })
+      
+      if (response.ok) {
+        const successPage = antrian.jenis_pasien === 'BPJS' 
+          ? '/bpjs/pasien-lama/sukses'
+          : '/umum/pasien-lama/sukses'
+        router.push(successPage)
+      } else {
+        throw new Error('Failed to print')
       }
+    } catch (error) {
+      console.error('Error printing:', error)
+      setIsPrinting(false)
     }
   }
   return (
@@ -67,38 +60,25 @@ export default function CetakAntrianClient({ antrian }: { antrian: any }) {
         />
         <p className="text-sm">Rumah Sakit Umum</p>
         <strong>St. Elisabeth Purwokerto</strong>
+        <small>Jalan Dokter Angka No. 40 Purwokerto, 53116</small>
         <p className="text-2xl text-center my-4">
           SELAMAT DATANG
           <br /> NO. ANTRIAN ANDA
         </p>
         <p className="text-7xl font-black">{antrian.nomor_antrian}</p>
-        <table className="my-5">
-          <tbody>
-            <tr>
-              <td>Nama</td>
-              <td className="!px-3">:</td>
-              <td>{antrian.nama_pasien}</td>
-            </tr>
-            <tr>
-              <td>Poliklinik</td>
-              <td className="!px-3">:</td>
-              <td>{antrian.nama_poli}</td>
-            </tr>
-            <tr>
-              <td>Dokter</td>
-              <td className="!px-3">:</td>
-              <td>{antrian.nama_dokter || "Belum ditentukan"}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="my-5 text-center">
+          <p>{antrian.nama_pasien}</p>
+          <p>{antrian.nama_poli}</p>
+          <p>{antrian.nama_dokter}</p>
+        </div>
         <p className="text-2xl text-center">
           TERIMA KASIH
           <br />
           ANDA TELAH MENUNGGU
         </p>
       </div>
-      <Button variant="primary" onClick={handlePrint}>
-        Cetak
+      <Button variant="primary" onClick={handlePrint} disabled={isPrinting}>
+        {isPrinting ? 'Mencetak...' : 'Cetak'}
       </Button>
     </div>
   )

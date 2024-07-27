@@ -1,22 +1,30 @@
 "use client"
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { Layout } from '@/components/organisms';
+import Lottie from 'lottie-react';
+import success from '@/components/atoms/success.json';
 
 export default function SuksesPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      router.push('/'); // ganti '/' dengan halaman tujuan setelah sukses
-    }, 5000); // Menunggu 3 detik sebelum redirect
-    
-    return () => clearTimeout(timer);
-  }, [router]);
-
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-4xl font-bold mb-4">Sukses!</h1>
-      <p>Antrian Anda telah dicetak. Anda akan diarahkan ke halaman utama dalam beberapa detik.</p>
-    </div>
+    <Layout>
+      <div className="flex justify-between">
+        <h1 className="text-4xl font-bold mb-4">Cetak Antrian Berhasil!</h1>
+        <p className="bg-BPJS h-fit px-6 py-2 rounded-full font-bold tracking-wide">
+          BPJS
+        </p>
+      </div>
+      <div className="flex flex-col justify-center items-center flex-grow">
+        <Lottie
+          animationData={success}
+          loop={true}
+          autoPlay={true}
+          style={{ width: 600, height: 600, marginTop: -250 }}
+        />
+        <p className="text-5xl font-medium uppercase leading-relaxed text-center -mt-28 ">
+          Terima kasih telah menggunakan layanan kami
+          <br />
+          Silakan tunggu panggilan petugas
+        </p>
+      </div>
+    </Layout>
   );
 }

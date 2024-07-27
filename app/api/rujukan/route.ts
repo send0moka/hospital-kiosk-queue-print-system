@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { executeQuery } from "@/lib/utils"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "../auth/[...nextauth]/route"
 
-export async function GET(req: Request) {
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url)
+    const searchParams = request.nextUrl.searchParams
     const nomorBPJS = searchParams.get('nomor_bpjs')
 
     if (!nomorBPJS) {
