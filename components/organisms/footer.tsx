@@ -36,16 +36,16 @@ const Footer = () => {
   }
 
   const isHomePage = pathname === '/'
-  const isSpecialPage = pathname === '/loket' || pathname === '/fingerprint' || pathname === '/aktivasi'
+  const isSpecialPage = pathname === '/loket' || pathname === '/fingerprint' || pathname === '/aktivasi' || pathname === '/bpjs/pasien-lama/sukses' || pathname === '/umum/pasien-lama/sukses'
 
   return (
     <div className="flex justify-between items-center text-[24px]">
       {isHomePage ? (
         // Footer untuk halaman utama
         <>
-          <p>{formatTime(currentDateTime)} | {formatDate(currentDateTime)}</p>
-          <span>Self Service Application</span>
-          <a href="bantuan">Bantuan & Informasi</a>
+            <p>{formatTime(currentDateTime)} | {formatDate(currentDateTime)}</p>
+            <span>Self Service Application</span>
+            <a href="bantuan">Bantuan & Informasi</a>
         </>
       ) : isSpecialPage ? (
         // Footer untuk halaman loket dan fingerprint
