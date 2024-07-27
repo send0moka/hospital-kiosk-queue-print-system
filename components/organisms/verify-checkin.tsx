@@ -6,8 +6,8 @@ import { ConfirmModal } from "@/components/molecules"
 import { useRouter } from "next/navigation"
 
 interface VerifikasiDataCheckInProps {
-  patientData: PatientData;
-  isExistingBooking: boolean;
+  patientData: PatientData
+  isExistingBooking: boolean
 }
 
 type PatientData = {
@@ -24,7 +24,10 @@ type PatientData = {
   jadwal_dokter_id: number
 }
 
-export default function VerifikasiDataCheckIn({ patientData, isExistingBooking }: VerifikasiDataCheckInProps) {
+export default function VerifikasiDataCheckIn({
+  patientData,
+  isExistingBooking,
+}: VerifikasiDataCheckInProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
   const formatTanggalLahir = (dateString: string) => {
@@ -78,13 +81,16 @@ export default function VerifikasiDataCheckIn({ patientData, isExistingBooking }
   }
   const handleConfirm = async () => {
     try {
-      console.log('Patient data before sending:', patientData);
-      if (isExistingBooking && (!patientData.booking_id || !patientData.jadwal_dokter_id)) {
-        throw new Error("Invalid booking ID or jadwal dokter ID");
+      console.log("Patient data before sending:", patientData)
+      if (
+        isExistingBooking &&
+        (!patientData.booking_id || !patientData.jadwal_dokter_id)
+      ) {
+        throw new Error("Invalid booking ID or jadwal dokter ID")
       }
-      const endpoint = isExistingBooking 
+      const endpoint = isExistingBooking
         ? "/api/bookings/confirm-existing"
-        : "/api/bookings/confirm";
+        : "/api/bookings/confirm"
       const body = isExistingBooking
         ? {
             bookingId: patientData.booking_id,
@@ -94,23 +100,23 @@ export default function VerifikasiDataCheckIn({ patientData, isExistingBooking }
         : {
             bookingId: patientData.booking_id,
             jadwalDokterId: patientData.jadwal_dokter_id,
-          };
+          }
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-        credentials: isExistingBooking ? 'omit' : 'include',
-      });
+        credentials: isExistingBooking ? "omit" : "include",
+      })
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to confirm booking");
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Failed to confirm booking")
       }
-      const data = await response.json();
-      router.push(`/bpjs/pasien-lama/cetak-antrian/${data.antrianId}`);
+      const data = await response.json()
+      router.push(`/bpjs/pasien-lama/cetak-antrian/${data.antrianId}`)
     } catch (error) {
-      console.error("Error confirming booking:", error);
+      console.error("Error confirming booking:", error)
     }
   }
   return (
@@ -133,63 +139,69 @@ export default function VerifikasiDataCheckIn({ patientData, isExistingBooking }
           </p>
         </div>
       </div>
-      <div className="flex flex-col gap-4 flex-grow font-bold text-black bg-gradient-to-b from-white/70 to-blue-200/50 py-6 px-10 rounded-3xl shadow-lg">
-        <h2 className="text-3xl">Mohon periksa kembali data Anda:</h2>
-        <div className="bg-white/80 text-black text-[24px] p-6 rounded-lg">
-          <table>
-            <tbody>
-              <tr>
-                <td>Nomor BPJS</td>
-                <td>:</td>
-                <td>{patientData.nomor_bpjs}</td>
-              </tr>
-              <tr>
-                <td>Nomor Rekam Medis</td>
-                <td>:</td>
-                <td>{patientData.nomor_rekam_medis}</td>
-              </tr>
-              <tr>
-                <td>Nama Lengkap</td>
-                <td>:</td>
-                <td>{patientData.nama}</td>
-              </tr>
-              <tr>
-                <td>Tanggal Lahir</td>
-                <td>:</td>
-                <td>{formatTanggalLahir(patientData.tanggal_lahir)}</td>
-              </tr>
-              <tr>
-                <td>Alamat</td>
-                <td>:</td>
-                <td>{patientData.alamat}</td>
-              </tr>
-              <tr>
-                <td>Poliklinik</td>
-                <td>:</td>
-                <td>{patientData.poli_nama}</td>
-              </tr>
-              <tr>
-                <td>Dokter</td>
-                <td>:</td>
-                <td>{patientData.dokter_nama}</td>
-              </tr>
-              <tr>
-                <td>Jadwal Kunjungan</td>
-                <td>:</td>
-                <td>
-                  {formatJadwalKunjungan(
-                    patientData.tanggal_booking,
-                    patientData.jam_booking
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div className="flex justify-end">
-          <Button variant="primary" size="lg" onClick={() => setIsModalOpen(true)}>
-            Konfirmasi
-          </Button>
+      <div className="flex-grow flex items-center">
+        <div className="flex flex-col w-full gap-4 font-bold text-black bg-gradient-to-b from-white/70 to-blue-200/50 py-6 px-10 rounded-3xl shadow-lg">
+          <h2 className="text-3xl">Mohon periksa kembali data Anda:</h2>
+          <div className="bg-white/80 text-black text-[24px] p-6 rounded-lg">
+            <table>
+              <tbody>
+                <tr>
+                  <td>Nomor BPJS</td>
+                  <td>:</td>
+                  <td>{patientData.nomor_bpjs}</td>
+                </tr>
+                <tr>
+                  <td>Nomor Rekam Medis</td>
+                  <td>:</td>
+                  <td>{patientData.nomor_rekam_medis}</td>
+                </tr>
+                <tr>
+                  <td>Nama Lengkap</td>
+                  <td>:</td>
+                  <td>{patientData.nama}</td>
+                </tr>
+                <tr>
+                  <td>Tanggal Lahir</td>
+                  <td>:</td>
+                  <td>{formatTanggalLahir(patientData.tanggal_lahir)}</td>
+                </tr>
+                <tr>
+                  <td>Alamat</td>
+                  <td>:</td>
+                  <td>{patientData.alamat}</td>
+                </tr>
+                <tr>
+                  <td>Poliklinik</td>
+                  <td>:</td>
+                  <td>{patientData.poli_nama}</td>
+                </tr>
+                <tr>
+                  <td>Dokter</td>
+                  <td>:</td>
+                  <td>{patientData.dokter_nama}</td>
+                </tr>
+                <tr>
+                  <td>Jadwal Kunjungan</td>
+                  <td>:</td>
+                  <td>
+                    {formatJadwalKunjungan(
+                      patientData.tanggal_booking,
+                      patientData.jam_booking
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="flex justify-end">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => setIsModalOpen(true)}
+            >
+              Konfirmasi
+            </Button>
+          </div>
         </div>
       </div>
       <ConfirmModal
