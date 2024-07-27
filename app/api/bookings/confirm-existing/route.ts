@@ -7,28 +7,21 @@ export async function POST(req: Request) {
     if (typeof bookingId !== "number") {
       return NextResponse.json({ error: "Invalid data type" }, { status: 400 })
     }
-
     const [booking]: any[] = await executeQuery(
       `SELECT * FROM booking WHERE id = ?`,
       [bookingId]
     )
-
     if (!booking) {
       return NextResponse.json({ error: "Booking tidak ditemukan" }, { status: 404 })
     }
-
-    const [bookingData]: any[] = await executeQuery(
-      `SELECT tanggal_booking FROM booking WHERE id = ?`,
-      [bookingId]
-    )
     const [lastAntrian]: any[] = await executeQuery(
-      `SELECT MAX(nomor_antrian) as last_number FROM antrian 
+      `SELECT MAX(CAST(nomor_antrian AS UNSIGNED)) as last_number FROM antrian 
        WHERE DATE(created_at) = ? AND booking_id IN (SELECT id FROM booking WHERE tanggal_booking = ?)`,
-      [bookingData.tanggal_booking, bookingData.tanggal_booking]
+      [booking.tanggal_booking, booking.tanggal_booking]
     )
     let newAntrianNumber = 1
     if (lastAntrian && lastAntrian.last_number) {
-      newAntrianNumber = lastAntrian.last_number + 1
+      newAntrianNumber = parseInt(lastAntrian.last_number, 10) + 1
     }
     const formattedAntrianNumber = newAntrianNumber.toString().padStart(3, "0")
     const result = await executeQuery<any>(
