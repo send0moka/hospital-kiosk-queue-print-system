@@ -15,7 +15,7 @@ const Header = () => {
     <div>
       {isMainOrSuccessPage() ? (
         // Logo besar untuk halaman utama dan halaman sukses
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center mb-5">
           <Logo className="h-10 md:h-12 lg:h-24" />
           <div>
             <p className="text-[24px] font-medium">Rumah Sakit Umum</p>

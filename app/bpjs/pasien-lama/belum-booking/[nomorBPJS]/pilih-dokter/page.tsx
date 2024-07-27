@@ -102,7 +102,8 @@ export default function PilihDokter() {
         </div>
       </div>
 
-      <div className="flex-grow flex flex-wrap justify-center items-center gap-4">
+      <div className="flex-grow flex justify-center items-center">
+      <div className="flex flex-wrap justify-center items-center gap-4">
         {doctors.map((doctor) => (
           <DokterCard
             key={doctor.id}
@@ -112,6 +113,7 @@ export default function PilihDokter() {
             onClick={() => handlePilihDokter(doctor.id)}
           />
         ))}
+      </div>
       </div>
     </Layout>
   )

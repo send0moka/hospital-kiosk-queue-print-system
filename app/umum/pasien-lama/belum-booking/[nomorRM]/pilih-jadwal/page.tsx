@@ -151,32 +151,19 @@ export default function PilihJadwal() {
   }
   if (isLoading) return <Spinner />
   if (error) return <div>{error}</div>
-  const isJadwalAvailable = (jamMulai: string) => {
+  const isJadwalAvailable = (jamMulai: string, jamSelesai: string) => {
     const now = new Date()
-    const [hour, minute] = jamMulai.split(":").map(Number)
-    const jadwalTime = new Date(now)
-    jadwalTime.setHours(hour, minute, 0, 0)
-    if (jadwalTime < now) {
-      jadwalTime.setDate(jadwalTime.getDate() + 1)
-    }
-    const bufferTime = new Date(now.getTime() + 15 * 60000)
-    console.log(`Checking jadwal: ${jamMulai}`)
-    console.log(
-      `Current time: ${now.toLocaleString("id-ID", {
-        timeZone: "Asia/Jakarta",
-      })}`
-    )
-    console.log(
-      `Jadwal time: ${jadwalTime.toLocaleString("id-ID", {
-        timeZone: "Asia/Jakarta",
-      })}`
-    )
-    console.log(
-      `Buffer time: ${bufferTime.toLocaleString("id-ID", {
-        timeZone: "Asia/Jakarta",
-      })}`
-    )
-    const isAvailable = jadwalTime > bufferTime
+    const [hourMulai, minuteMulai] = jamMulai.split(":").map(Number)
+    const [hourSelesai, minuteSelesai] = jamSelesai.split(":").map(Number)
+    const jadwalMulai = new Date(now)
+    jadwalMulai.setHours(hourMulai, minuteMulai, 0, 0)
+    const jadwalSelesai = new Date(now)
+    jadwalSelesai.setHours(hourSelesai, minuteSelesai, 0, 0)
+    console.log(`Checking jadwal: ${jamMulai} - ${jamSelesai}`)
+    console.log(`Current time: ${now.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })}`)
+    console.log(`Jadwal mulai: ${jadwalMulai.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })}`)
+    console.log(`Jadwal selesai: ${jadwalSelesai.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })}`)
+    const isAvailable = jadwalMulai.getDate() === now.getDate() && now <= jadwalSelesai
     console.log(`Is available: ${isAvailable}`)
     return isAvailable
   }
@@ -198,27 +185,29 @@ export default function PilihJadwal() {
           </p>
         </div>
       </div>
-      {jadwalList.length === 0 ? (
-        <p>Tidak ada jadwal tersedia untuk hari ini</p>
-      ) : (
-        <div className="flex flex-grow flex-wrap justify-center items-center gap-4">
-          {jadwalList.map((jadwal) => {
-            const isAvailable = isJadwalAvailable(jadwal.jam_mulai)
-            return (
-              <Button
-                key={jadwal.id}
-                onClick={() => handlePilihJadwal(jadwal.id)}
-                variant="primary"
-                className="p-8"
-                disabled={!isAvailable}
-              >
-                {jadwal.jam_mulai} - {jadwal.jam_selesai}
-                {!isAvailable && " (Tidak tersedia)"}
-              </Button>
-            )
-          })}
-        </div>
-      )}
+      <div className="flex flex-grow flex-wrap justify-center items-center gap-4">
+        {jadwalList.length === 0 ? (
+          <p className="text-2xl">Tidak ada jadwal tersedia untuk hari ini</p>
+        ) : (
+          <>
+            {jadwalList.map((jadwal) => {
+              const isAvailable = isJadwalAvailable(jadwal.jam_mulai, jadwal.jam_selesai)
+              return (
+                <Button
+                  key={jadwal.id}
+                  onClick={() => handlePilihJadwal(jadwal.id)}
+                  variant="primary"
+                  className="p-8"
+                  disabled={!isAvailable}
+                >
+                  {jadwal.jam_mulai} - {jadwal.jam_selesai}
+                  {!isAvailable && " (Tidak tersedia)"}
+                </Button>
+              )
+            })}
+          </>
+        )}
+      </div>
       <ConfirmModal
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
