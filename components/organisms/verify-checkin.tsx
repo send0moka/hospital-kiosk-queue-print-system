@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/atoms"
 import { Layout } from "@/components/organisms"
 import { ConfirmModal } from "@/components/molecules"
@@ -22,6 +22,9 @@ type PatientData = {
   jam_booking: string
   booking_id: number
   jadwal_dokter_id: number
+  jam_mulai: string
+  jam_selesai: string
+  kode_booking: string
 }
 
 export default function VerifikasiDataCheckIn({
@@ -30,6 +33,17 @@ export default function VerifikasiDataCheckIn({
 }: VerifikasiDataCheckInProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
+  useEffect(() => {
+    const checkBookingDate = () => {
+      const bookingDate = new Date(patientData.tanggal_booking)
+      const today = new Date()
+      
+      if (bookingDate.toDateString() !== today.toDateString()) {
+        router.push(`/bpjs/pasien-lama/sudah-booking/${patientData.kode_booking}/booking-invalid`)
+      }
+    }
+    checkBookingDate()
+  }, [patientData.tanggal_booking, patientData.kode_booking, router])
   const formatTanggalLahir = (dateString: string) => {
     const date = new Date(dateString)
     const options: Intl.DateTimeFormatOptions = {
@@ -39,7 +53,7 @@ export default function VerifikasiDataCheckIn({
     }
     return date.toLocaleDateString("id-ID", options)
   }
-  const formatJadwalKunjungan = (dateString: any, timeString: any) => {
+  const formatWaktuBooking = (dateString: any, timeString: any) => {
     if (typeof dateString !== "string" || typeof timeString !== "string") {
       console.error("Invalid date or time format:", { dateString, timeString })
       return "Format tanggal atau waktu tidak valid"
@@ -78,6 +92,9 @@ export default function VerifikasiDataCheckIn({
       console.error("Error formatting date:", error)
       return "Gagal memformat tanggal dan waktu"
     }
+  }
+  const formatWaktuKunjungan = (jamMulai: string, jamSelesai: string) => {
+    return `${jamMulai} - ${jamSelesai}`
   }
   const handleConfirm = async () => {
     try {
@@ -146,6 +163,21 @@ export default function VerifikasiDataCheckIn({
             <table>
               <tbody>
                 <tr>
+                  <td>Waktu Booking</td>
+                  <td>:</td>
+                  <td>
+                    {formatWaktuBooking(
+                      patientData.tanggal_booking,
+                      patientData.jam_booking
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Kode Booking</td>
+                  <td>:</td>
+                  <td>{patientData.kode_booking}</td>
+                </tr>
+                <tr>
                   <td>Nomor BPJS</td>
                   <td>:</td>
                   <td>{patientData.nomor_bpjs}</td>
@@ -184,9 +216,9 @@ export default function VerifikasiDataCheckIn({
                   <td>Jadwal Kunjungan</td>
                   <td>:</td>
                   <td>
-                    {formatJadwalKunjungan(
-                      patientData.tanggal_booking,
-                      patientData.jam_booking
+                    {formatWaktuKunjungan(
+                      patientData.jam_mulai,
+                      patientData.jam_selesai
                     )}
                   </td>
                 </tr>

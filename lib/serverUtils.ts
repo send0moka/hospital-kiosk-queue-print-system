@@ -92,14 +92,6 @@ export async function getPatientDataByBooking(kodeBooking: string) {
 
   try {
     const result = await executeQuery(
-      // `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, d.nama AS dokter_nama, b.id AS booking_id, jd.id AS jadwal_dokter_id, b.kode_booking
-      //  FROM booking b 
-      //  JOIN pasien p ON b.pasien_id = p.id
-      //  JOIN poli po ON b.poli_id = po.id
-      //  JOIN jadwal_dokter jd ON b.jadwal_dokter_id = jd.id
-      //  JOIN dokter d ON jd.dokter_id = d.id
-      //  WHERE b.kode_booking = ? AND b.jenis_layanan = 'BPJS'
-      //  LIMIT 1`,
       `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, 
               b.id AS booking_id, b.kode_booking,
               jd.id AS jadwal_dokter_id, d.nama AS dokter_nama

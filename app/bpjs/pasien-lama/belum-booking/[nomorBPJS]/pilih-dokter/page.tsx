@@ -19,11 +19,9 @@ export default function PilihDokter() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const params = useParams()
-
   const poliId = searchParams.get("poli_id")
   const bookingId = searchParams.get("bookingId")
   const nomorBPJS = params.nomorBPJS as string
-
   useEffect(() => {
     const fetchDoctors = async () => {
       if (!poliId) {
@@ -31,7 +29,6 @@ export default function PilihDokter() {
         setIsLoading(false)
         return
       }
-
       try {
         const response = await fetch(
           `/api/dokter/list-by-poli?poli_id=${poliId}`
@@ -48,10 +45,8 @@ export default function PilihDokter() {
         setIsLoading(false)
       }
     }
-
     fetchDoctors()
   }, [poliId])
-
   const handlePilihDokter = async (dokterId: number) => {
     try {
       const response = await fetch(`/api/bookings/update-doctor`, {
@@ -61,12 +56,9 @@ export default function PilihDokter() {
         },
         body: JSON.stringify({ bookingId, dokterId }),
       })
-
       if (!response.ok) {
         throw new Error("Failed to update booking")
       }
-
-      // Redirect to the jadwal selection page (not yet created)
       router.push(
         `/bpjs/pasien-lama/belum-booking/${nomorBPJS}/pilih-jadwal?bookingId=${bookingId}&dokterId=${dokterId}`
       )
@@ -75,10 +67,8 @@ export default function PilihDokter() {
       console.error(err)
     }
   }
-
   if (isLoading) return <Spinner />
   if (error) return <div>{error}</div>
-
   return (
     <Layout>
       <div className="flex justify-between">
@@ -101,7 +91,6 @@ export default function PilihDokter() {
           </p>
         </div>
       </div>
-
       <div className="flex-grow flex justify-center items-center">
       <div className="flex flex-wrap justify-center items-center gap-4">
         {doctors.map((doctor) => (
