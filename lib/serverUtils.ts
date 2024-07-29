@@ -90,13 +90,6 @@ export async function getPatientDataByBooking(kodeBooking: string) {
     return null;
   }
 
-export async function getPatientDataByBooking(kodeBooking: string) {
-  console.log("getPatientDataByBooking called with:", kodeBooking);
-  if (!kodeBooking) {
-    console.error("kodeBooking is undefined in getPatientDataByBooking");
-    return null;
-  }
-
   try {
     const result = await executeQuery(
       `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, 
