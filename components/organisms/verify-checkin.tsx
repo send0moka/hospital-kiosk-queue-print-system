@@ -11,6 +11,7 @@ interface VerifikasiDataCheckInProps {
 }
 
 type PatientData = {
+  isBookingValid?: boolean
   nomor_bpjs: string
   nomor_rekam_medis: string
   nama: string
@@ -33,17 +34,21 @@ export default function VerifikasiDataCheckIn({
 }: VerifikasiDataCheckInProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
+  const [isBookingValid, setIsBookingValid] = useState(true)
   useEffect(() => {
-    const checkBookingDate = () => {
-      const bookingDate = new Date(patientData.tanggal_booking)
-      const today = new Date()
-      
-      if (bookingDate.toDateString() !== today.toDateString()) {
-        router.push(`/bpjs/pasien-lama/sudah-booking/${patientData.kode_booking}/booking-invalid`)
+    if (patientData.isBookingValid !== undefined) {
+      setIsBookingValid(patientData.isBookingValid);
+    } else {
+      const checkBookingDate = () => {
+        const bookingDate = new Date(patientData.tanggal_booking)
+        const today = new Date()
+        bookingDate.setHours(0, 0, 0, 0)
+        today.setHours(0, 0, 0, 0)
+        setIsBookingValid(bookingDate.getTime() === today.getTime())
       }
+      checkBookingDate()
     }
-    checkBookingDate()
-  }, [patientData.tanggal_booking, patientData.kode_booking, router])
+  }, [patientData.isBookingValid, patientData.tanggal_booking])
   const formatTanggalLahir = (dateString: string) => {
     const date = new Date(dateString)
     const options: Intl.DateTimeFormatOptions = {
@@ -226,6 +231,7 @@ export default function VerifikasiDataCheckIn({
             </table>
           </div>
           <div className="flex justify-end">
+            {!isBookingValid && <p className="text-red-500">Booking tidak valid untuk hari ini</p>}
             <Button
               variant="primary"
               size="lg"

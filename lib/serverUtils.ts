@@ -89,12 +89,12 @@ export async function getPatientDataByBooking(kodeBooking: string) {
     console.error("kodeBooking is undefined in getPatientDataByBooking");
     return null;
   }
-
   try {
     const result = await executeQuery(
       `SELECT p.*, b.tanggal_booking, b.jam_booking, po.nama AS poli_nama, 
               b.id AS booking_id, b.kode_booking,
-              jd.id AS jadwal_dokter_id, d.nama AS dokter_nama
+              jd.id AS jadwal_dokter_id, d.nama AS dokter_nama,
+              jd.hari, jd.jam_mulai, jd.jam_selesai
        FROM booking b 
        JOIN pasien p ON b.pasien_id = p.id
        JOIN poli po ON b.poli_id = po.id
@@ -108,6 +108,15 @@ export async function getPatientDataByBooking(kodeBooking: string) {
     if (Array.isArray(result) && result.length > 0) {
       const patientData = result[0];
       patientData.tanggal_booking = new Date(patientData.tanggal_booking).toISOString().split('T')[0];
+      const today = new Date();
+      const daysOfWeek = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const currentDay = daysOfWeek[today.getDay()];
+      const currentTime = today.toLocaleTimeString('en-US', { hour12: false });
+      if (patientData.hari === currentDay && currentTime <= patientData.jam_selesai) {
+        patientData.isBookingValid = true;
+      } else {
+        patientData.isBookingValid = false;
+      }
       return patientData;
     } else {
       console.log("No patient data found for kodeBooking:", kodeBooking);
