@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS antrian (
     id INT AUTO_INCREMENT PRIMARY KEY,
     booking_id INT,
     nomor_antrian VARCHAR(3) NOT NULL,
-    created_at DATE DEFAULT (CURRENT_DATE),
+    created_at DATETIME DEFAULT (CURRENT_TIMESTAMP),
     FOREIGN KEY (booking_id) REFERENCES booking(id),
     UNIQUE KEY (created_at, nomor_antrian)
 );
