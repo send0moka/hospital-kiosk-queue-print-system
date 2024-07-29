@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     }
     const [lastAntrian]: any[] = await executeQuery(
       `SELECT MAX(CAST(nomor_antrian AS UNSIGNED)) as last_number FROM antrian 
-       WHERE DATE(created_at) = ? AND booking_id IN (SELECT id FROM booking WHERE tanggal_booking = ?)`,
+       WHERE DATE(created_at) = CURDATE() AND booking_id IN (SELECT id FROM booking WHERE tanggal_booking = CURDATE())`,
       [booking.tanggal_booking, booking.tanggal_booking]
     )
     let newAntrianNumber = 1
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     }
     const formattedAntrianNumber = newAntrianNumber.toString().padStart(3, "0")
     const result = await executeQuery<any>(
-      `INSERT INTO antrian (booking_id, nomor_antrian) VALUES (?, ?)`,
+      `INSERT INTO antrian (booking_id, nomor_antrian, created_at) VALUES (?, ?, NOW())`,
       [bookingId, formattedAntrianNumber]
     )
     if (!result || !result.insertId) {
