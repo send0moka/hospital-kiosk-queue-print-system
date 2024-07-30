@@ -83,7 +83,9 @@ CREATE TABLE IF NOT EXISTS antrian (
     booking_id INT,
     nomor_antrian VARCHAR(3) NOT NULL,
     created_at DATETIME DEFAULT (CURRENT_TIMESTAMP),
+    jadwal_dokter_id INT,
     FOREIGN KEY (booking_id) REFERENCES booking(id),
+    FOREIGN KEY (jadwal_dokter_id) REFERENCES jadwal_dokter(id),
     UNIQUE KEY (created_at, nomor_antrian)
 );
 
@@ -486,9 +488,10 @@ INSERT INTO booking (kode_booking, pasien_id, tanggal_booking, jam_booking, jeni
 ('JKL012', 22, '2024-07-23', '17:23:41', 'Umum', 9, 28, NULL, 159, 'Selesai'),
 -- Pasien BPJS Menunggu
 ('MNO345', 3, '2024-07-24', '11:04:05', 'BPJS', 3, 15, 5, 92, 'Menunggu'),
-('PQR678', 4, '2024-07-24', '12:34:52', 'BPJS', 6, 21, 8, 121, 'Menunggu'),
-('STU901', 5, '2024-07-24', '16:30:04', 'BPJS', 15, 37, 9, 193, 'Menunggu'),
+('PQR678', 4, '2024-07-24', '12:34:52', 'BPJS', 6, 21, 8, 122, 'Menunggu'),
+('STU901', 5, '2024-07-24', '16:30:04', 'BPJS', 15, 37, 9, 194, 'Menunggu'),
 -- Pasien Umum Menunggu
 ('VWX234', 23, '2024-07-25', '11:15:32', 'Umum', 7, 25, NULL, 143, 'Menunggu'),
-('YZA567', 24, '2024-07-25', '17:45:00', 'Umum', 6, 22, NULL, 127, 'Menunggu'),
-('BCD890', 25, '2024-07-26', '17:52:12', 'Umum', 5, 19, NULL, 113, 'Menunggu');
+('YZA567', 24, '2024-07-25', '17:45:00', 'Umum', 6, 22, NULL, 128, 'Menunggu'),
+('BCD890', 25, '2024-07-26', '17:52:12', 'Umum', 5, 19, NULL, 114, 'Menunggu');
+

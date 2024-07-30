@@ -9,7 +9,7 @@ export default function BantuanPage() {
           Bantuan dan Dukungan Teknis
           <br />
           <span className="text-3xl font-normal">
-            Kami siap membantu Anda
+            Panggil petugas jika Anda memerlukan bantuan teknis
           </span>
         </p>
       </div>

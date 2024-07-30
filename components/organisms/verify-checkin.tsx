@@ -103,6 +103,10 @@ export default function VerifikasiDataCheckIn({
   }
   const handleConfirm = async () => {
     try {
+      console.log("Patient data:", {
+        booking_id: patientData.booking_id,
+        jadwal_dokter_id: patientData.jadwal_dokter_id
+      });
       console.log("Patient data before sending:", patientData)
       if (
         isExistingBooking &&

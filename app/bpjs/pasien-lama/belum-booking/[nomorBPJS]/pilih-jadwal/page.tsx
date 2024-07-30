@@ -111,7 +111,6 @@ export default function PilihJadwal() {
     }
   }
   if (isLoading) return <Spinner />
-  if (error) return <div>{error}</div>
   const today = new Date()
   const currentTime = today.getHours() * 60 + today.getMinutes()
   return (
@@ -133,25 +132,31 @@ export default function PilihJadwal() {
         </div>
       </div>
       <div className="flex flex-grow flex-wrap justify-center items-center gap-4">
-        {jadwalList.length === 0 ? (
-          <p className="text-2xl">Tidak ada jadwal tersedia untuk hari ini</p>
+      {error ? (
+          <div className="text-red-500 text-2xl">{error}</div>
         ) : (
           <>
-            {jadwalList.map((jadwal) => {
-              const isAvailable = isJadwalAvailable(jadwal.jam_mulai, jadwal.jam_selesai)
-              return (
-                <Button
-                  key={jadwal.id}
-                  onClick={() => handlePilihJadwal(jadwal.id)}
-                  variant="primary"
-                  className="p-8"
-                  disabled={!isAvailable}
-                >
-                  {jadwal.jam_mulai} - {jadwal.jam_selesai}
-                  {!isAvailable && " (Tidak tersedia)"}
-                </Button>
-              )
-            })}
+            {jadwalList.length === 0 ? (
+              <p className="text-2xl">Tidak ada jadwal tersedia untuk hari ini</p>
+            ) : (
+              <>
+                {jadwalList.map((jadwal) => {
+                  const isAvailable = isJadwalAvailable(jadwal.jam_mulai, jadwal.jam_selesai)
+                  return (
+                    <Button
+                      key={jadwal.id}
+                      onClick={() => handlePilihJadwal(jadwal.id)}
+                      variant="primary"
+                      className="p-8"
+                      disabled={!isAvailable}
+                    >
+                      {jadwal.jam_mulai} - {jadwal.jam_selesai}
+                      {!isAvailable && " (Tidak tersedia)"}
+                    </Button>
+                  )
+                })}
+              </>
+            )}
           </>
         )}
       </div>

@@ -3,8 +3,9 @@ import { executeQuery } from "@/lib/utils"
 
 export async function POST(req: Request) {
   try {
-    const { bookingId } = await req.json()
-    if (typeof bookingId !== "number") {
+    const { bookingId, jadwalDokterId } = await req.json()
+    console.log('Received data:', { bookingId, jadwalDokterId });
+    if (typeof bookingId !== "number" || typeof jadwalDokterId !== "number") {
       return NextResponse.json({ error: "Invalid data type" }, { status: 400 })
     }
     const [booking]: any[] = await executeQuery(
@@ -15,9 +16,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Booking tidak ditemukan" }, { status: 404 })
     }
     const [lastAntrian]: any[] = await executeQuery(
-      `SELECT MAX(CAST(nomor_antrian AS UNSIGNED)) as last_number FROM antrian 
-       WHERE DATE(created_at) = CURDATE() AND booking_id IN (SELECT id FROM booking WHERE tanggal_booking = CURDATE())`,
-      [booking.tanggal_booking, booking.tanggal_booking]
+      `SELECT MAX(CAST(nomor_antrian AS UNSIGNED)) as last_number 
+       FROM antrian 
+       WHERE DATE(created_at) = CURDATE()
+       AND jadwal_dokter_id = ?`,
+      [jadwalDokterId]
     )
     let newAntrianNumber = 1
     if (lastAntrian && lastAntrian.last_number) {
@@ -25,8 +28,9 @@ export async function POST(req: Request) {
     }
     const formattedAntrianNumber = newAntrianNumber.toString().padStart(3, "0")
     const result = await executeQuery<any>(
-      `INSERT INTO antrian (booking_id, nomor_antrian, created_at) VALUES (?, ?, NOW())`,
-      [bookingId, formattedAntrianNumber]
+      `INSERT INTO antrian (booking_id, nomor_antrian, created_at, jadwal_dokter_id) 
+       VALUES (?, ?, NOW(), ?)`,
+      [bookingId, formattedAntrianNumber, jadwalDokterId]
     )
     if (!result || !result.insertId) {
       throw new Error("Failed to insert new antrian")

@@ -52,7 +52,7 @@ export default function PilihJadwal() {
           setPoliId(data[0].poli_id)
         } else {
           console.error("No poli_id found in jadwal data")
-          setError("Tidak dapat menemukan ID Poliklinik")
+          setError("Tidak ada jadwal tersedia untuk hari ini")
         }
       } catch (err) {
         setError("Terjadi kesalahan saat mengambil data jadwal")
@@ -150,7 +150,6 @@ export default function PilihJadwal() {
     return <Spinner />;
   }
   if (isLoading) return <Spinner />
-  if (error) return <div>{error}</div>
   const isJadwalAvailable = (jamMulai: string, jamSelesai: string) => {
     const now = new Date()
     const [hourMulai, minuteMulai] = jamMulai.split(":").map(Number)
@@ -186,25 +185,31 @@ export default function PilihJadwal() {
         </div>
       </div>
       <div className="flex flex-grow flex-wrap justify-center items-center gap-4">
-        {jadwalList.length === 0 ? (
-          <p className="text-2xl">Tidak ada jadwal tersedia untuk hari ini</p>
+        {error ? (
+          <div className="text-red-500 text-2xl">{error}</div>
         ) : (
           <>
-            {jadwalList.map((jadwal) => {
-              const isAvailable = isJadwalAvailable(jadwal.jam_mulai, jadwal.jam_selesai)
-              return (
-                <Button
-                  key={jadwal.id}
-                  onClick={() => handlePilihJadwal(jadwal.id)}
-                  variant="primary"
-                  className="p-8"
-                  disabled={!isAvailable}
-                >
-                  {jadwal.jam_mulai} - {jadwal.jam_selesai}
-                  {!isAvailable && " (Tidak tersedia)"}
-                </Button>
-              )
-            })}
+            {jadwalList.length === 0 ? (
+              <p className="text-2xl">Tidak ada jadwal tersedia untuk hari ini</p>
+            ) : (
+              <>
+                {jadwalList.map((jadwal) => {
+                  const isAvailable = isJadwalAvailable(jadwal.jam_mulai, jadwal.jam_selesai)
+                  return (
+                    <Button
+                      key={jadwal.id}
+                      onClick={() => handlePilihJadwal(jadwal.id)}
+                      variant="primary"
+                      className="p-8"
+                      disabled={!isAvailable}
+                    >
+                      {jadwal.jam_mulai} - {jadwal.jam_selesai}
+                      {!isAvailable && " (Tidak tersedia)"}
+                    </Button>
+                  )
+                })}
+              </>
+            )}
           </>
         )}
       </div>

@@ -68,7 +68,6 @@ export default function PilihDokter() {
     }
   }
   if (isLoading) return <Spinner />
-  if (error) return <div>{error}</div>
   return (
     <Layout>
       <div className="flex justify-between">
@@ -92,17 +91,23 @@ export default function PilihDokter() {
         </div>
       </div>
       <div className="flex-grow flex justify-center items-center">
-      <div className="flex flex-wrap justify-center items-center gap-4">
-        {doctors.map((doctor) => (
-          <DokterCard
-            key={doctor.id}
-            nama={doctor.nama}
-            foto={doctor.foto}
-            spesialisasi={doctor.spesialisasi}
-            onClick={() => handlePilihDokter(doctor.id)}
-          />
-        ))}
-      </div>
+      {error ? (
+          <div className="text-red-500 text-2xl">{error}</div>
+        ) : (
+          <>
+            <div className="flex flex-wrap justify-center items-center gap-4">
+              {doctors.map((doctor) => (
+                <DokterCard
+                  key={doctor.id}
+                  nama={doctor.nama}
+                  foto={doctor.foto}
+                  spesialisasi={doctor.spesialisasi}
+                  onClick={() => handlePilihDokter(doctor.id)}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </Layout>
   )

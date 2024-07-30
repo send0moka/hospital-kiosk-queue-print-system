@@ -37,7 +37,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ bookingId: booking.id }),
+          body: JSON.stringify({ bookingId: booking.id, jadwalDokterId: booking.jadwal_dokter_id }),
         })
         const data = await response.json()
         if (response.ok && data.antrianId) {
