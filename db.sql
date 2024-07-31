@@ -495,3 +495,12 @@ INSERT INTO booking (kode_booking, pasien_id, tanggal_booking, jam_booking, jeni
 ('YZA567', 24, '2024-07-25', '17:45:00', 'Umum', 6, 22, NULL, 128, 'Menunggu'),
 ('BCD890', 25, '2024-07-26', '17:52:12', 'Umum', 5, 19, NULL, 115, 'Menunggu');
 
+INSERT INTO antrian (booking_id, nomor_antrian, created_at, jadwal_dokter_id) VALUES
+-- Pasien BPJS Menunggu Sudah Booking
+(5, '001', '2024-07-24 11:04:05', 93),
+(6, '001', '2024-07-24 12:34:52', 123),
+(7, '001', '2024-07-24 16:30:04', 195),
+-- Pasien Umum Menunggu Sudah Booking
+(8, '001', '2024-07-25 11:15:32', 144),
+(9, '001', '2024-07-25 17:45:00', 128),
+(10, '001', '2024-07-26 17:52:12', 115);

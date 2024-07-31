@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 export default function CetakAntrianClient({ antrian }: { antrian: any }) {
   const router = useRouter()
   const [isPrinting, setIsPrinting] = useState(false)
-
+  const [currentDateTime, setCurrentDateTime] = useState('')
   useEffect(() => {
     const updateBookingStatus = async () => {
       try {
@@ -24,8 +24,20 @@ export default function CetakAntrianClient({ antrian }: { antrian: any }) {
       }
     }
     updateBookingStatus()
+    const timer = setInterval(() => {
+      const now = new Date()
+      const jakartaTime = new Intl.DateTimeFormat('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(now)
+      setCurrentDateTime(jakartaTime)
+    }, 1000)
+    return () => clearInterval(timer)
   }, [antrian.booking_id])
-
   const handlePrint = async () => {
     setIsPrinting(true)
     try {
@@ -34,7 +46,6 @@ export default function CetakAntrianClient({ antrian }: { antrian: any }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ antrian })
       })
-      
       if (response.ok) {
         const successPage = antrian.jenis_pasien === 'BPJS' 
           ? '/bpjs/pasien-lama/sukses'
@@ -70,12 +81,14 @@ export default function CetakAntrianClient({ antrian }: { antrian: any }) {
           <p>{antrian.nama_pasien}</p>
           <p>{antrian.nama_poli}</p>
           <p>{antrian.nama_dokter}</p>
+          <p>{antrian.hari}, {antrian.jam_mulai} - {antrian.jam_selesai}</p>
         </div>
-        <p className="text-2xl text-center">
+        <p className="text-2xl text-center mb-2">
           TERIMA KASIH
           <br />
           ANDA TELAH MENUNGGU
         </p>
+        <small>{currentDateTime}</small>
       </div>
       <Button variant="primary" onClick={handlePrint} disabled={isPrinting}>
         {isPrinting ? 'Mencetak...' : 'Cetak'}

@@ -13,12 +13,10 @@ async function getAntrianData(antrianId: string) {
        WHERE a.id = ?`,
       [antrianId]
     )
-
     if (!antrian) {
       console.log("Antrian tidak ditemukan untuk ID:", antrianId)
       return null
     }
-
     console.log("Data antrian yang ditemukan:", antrian)
     return antrian
   } catch (error) {
@@ -37,7 +35,6 @@ export default async function CetakAntrianPage({
   if (!antrian) {
     return <p className="text-red-500">Data antrian tidak ditemukan</p>
   }
-
   return (
     <Layout>
       <div className="flex justify-between">
