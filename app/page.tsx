@@ -19,7 +19,7 @@ const Home = () => {
                 Selamat Datang!
               </h1>
               <small className="opacity-70">
-                Self Service Application v1.1.0.
+                Sistem Cetak Antrian versi 1.0
               </small>
             </div>
             <div className="space-y-8 flex-grow">
