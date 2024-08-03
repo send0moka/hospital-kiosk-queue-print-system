@@ -316,7 +316,8 @@ INSERT INTO jadwal_dokter (dokter_id, poli_id, hari, jam_mulai, jam_selesai, lay
 (14, 2, 'Sabtu', '14:00:00', '20:00:00', 'Semua'),
 
 (15, 3, 'Selasa', '12:00:00', '14:00:00', 'Semua'),
-(15, 3, 'Rabu', '11:00:00', '14:00:00', 'Semua'),
+-- dummy
+(15, 3, 'Sabtu', '11:00:00', '14:00:00', 'Semua'),
 (15, 3, 'Kamis', '11:00:00', '14:00:00', 'Semua'),
 
 (16, 4, 'Senin', '15:30:00', '17:30:00', 'Semua'),
@@ -342,7 +343,8 @@ INSERT INTO jadwal_dokter (dokter_id, poli_id, hari, jam_mulai, jam_selesai, lay
 
 (19, 5, 'Senin', '16:30:00', '18:00:00', 'Semua'),
 (19, 5, 'Selasa', '16:30:00', '18:00:00', 'Semua'),
-(19, 5, 'Rabu', '16:30:00', '18:00:00', 'Semua'),
+-- dummy
+(19, 5, 'Sabtu', '16:30:00', '18:00:00', 'Semua'),
 (19, 5, 'Kamis', '16:30:00', '18:00:00', 'Semua'),
 (19, 5, 'Jumat', '11:30:00', '12:30:00', 'Semua'),
 (19, 5, 'Jumat', '17:00:00', '17:45:00', 'Semua'),
@@ -352,7 +354,8 @@ INSERT INTO jadwal_dokter (dokter_id, poli_id, hari, jam_mulai, jam_selesai, lay
 
 (21, 6, 'Senin', '09:00:00', '13:00:00', 'Semua'),
 (21, 6, 'Selasa', '09:00:00', '13:00:00', 'Semua'),
-(21, 6, 'Rabu', '09:00:00', '13:00:00', 'Semua'),
+-- dummy
+(21, 6, 'Sabtu', '09:00:00', '13:00:00', 'Semua'),
 (21, 6, 'Kamis', '09:00:00', '13:00:00', 'Semua'),
 (21, 6, 'Jumat', '09:00:00', '13:00:00', 'Semua'),
 (21, 6, 'Sabtu', '09:00:00', '14:00:00', 'Semua'),
@@ -377,7 +380,8 @@ INSERT INTO jadwal_dokter (dokter_id, poli_id, hari, jam_mulai, jam_selesai, lay
 (24, 6, 'Jumat', '14:00:00', '16:00:00', 'Semua'),
 
 (25, 7, 'Senin', '16:00:00', '19:00:00', 'Semua'),
-(25, 7, 'Rabu', '16:00:00', '19:00:00', 'Semua'),
+-- dummy
+(25, 7, 'Sabtu', '16:00:00', '19:00:00', 'Semua'),
 (25, 7, 'Kamis', '16:00:00', '19:00:00', 'Semua'),
 
 (26, 7, 'Selasa', '16:00:00', '18:00:00', 'Semua'),
@@ -440,7 +444,8 @@ INSERT INTO jadwal_dokter (dokter_id, poli_id, hari, jam_mulai, jam_selesai, lay
 (37, 15, 'Jumat', '09:00:00', '12:00:00', 'BPJS'),
 (37, 15, 'Senin', '16:00:00', '18:00:00', 'Umum'),
 (37, 15, 'Selasa', '16:00:00', '18:00:00', 'Umum'),
-(37, 15, 'Rabu', '16:00:00', '18:00:00', 'Umum'),
+-- dummy
+(37, 15, 'Sabtu', '16:00:00', '18:00:00', 'Umum'),
 (37, 15, 'Kamis', '16:00:00', '18:00:00', 'Umum'),
 (37, 15, 'Jumat', '16:00:00', '18:00:00', 'Umum'),
 
@@ -486,21 +491,22 @@ INSERT INTO booking (kode_booking, pasien_id, tanggal_booking, jam_booking, jeni
 -- Pasien Umum Selesai
 ('GHI789', 21, '2024-07-23', '11:54:54', 'Umum', 10, 30, NULL, 166, 'Selesai'),
 ('JKL012', 22, '2024-07-23', '17:23:41', 'Umum', 9, 28, NULL, 159, 'Selesai'),
--- Pasien BPJS Menunggu
+-- Pasien BPJS Menunggu bisa aja dummy
 ('MNO345', 3, '2024-07-24', '11:04:05', 'BPJS', 3, 15, 5, 93, 'Menunggu'),
 ('PQR678', 4, '2024-07-24', '12:34:52', 'BPJS', 6, 21, 8, 123, 'Menunggu'),
 ('STU901', 5, '2024-07-24', '16:30:04', 'BPJS', 15, 37, 9, 195, 'Menunggu'),
--- Pasien Umum Menunggu
+-- Pasien Umum Menunggu bisa aja dummy
 ('VWX234', 23, '2024-07-25', '11:15:32', 'Umum', 7, 25, NULL, 144, 'Menunggu'),
-('YZA567', 24, '2024-07-25', '17:45:00', 'Umum', 6, 22, NULL, 128, 'Menunggu'),
+('YZA567', 24, '2024-07-25', '17:45:00', 'Umum', 6, 22, NULL, 131, 'Menunggu'),
 ('BCD890', 25, '2024-07-26', '17:52:12', 'Umum', 5, 19, NULL, 115, 'Menunggu');
 
+-- pasti dummy karena harus fetch api dari luar sistem seperti booking via WA/web regist
 INSERT INTO antrian (booking_id, nomor_antrian, created_at, jadwal_dokter_id) VALUES
 -- Pasien BPJS Menunggu Sudah Booking
-(5, '001', '2024-07-24 11:04:05', 93),
-(6, '001', '2024-07-24 12:34:52', 123),
-(7, '001', '2024-07-24 16:30:04', 195),
+(5, '001', NULL, 93),
+(6, '001', NULL, 123),
+(7, '001', NULL, 195),
 -- Pasien Umum Menunggu Sudah Booking
-(8, '001', '2024-07-25 11:15:32', 144),
-(9, '001', '2024-07-25 17:45:00', 128),
-(10, '001', '2024-07-26 17:52:12', 115);
+(8, '001', NULL, 144),
+(9, '001', NULL, 131),
+(10, '001', NULL, 115);

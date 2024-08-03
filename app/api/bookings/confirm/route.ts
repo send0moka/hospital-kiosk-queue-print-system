@@ -11,16 +11,22 @@ export async function POST(req: Request) {
     }
     const { bookingId, jadwalDokterId } = await req.json()
     const [existingAntrian]: any[] = await executeQuery(
-      `SELECT nomor_antrian FROM antrian WHERE booking_id = ?`,
+      `SELECT id, nomor_antrian FROM antrian WHERE booking_id = ?`,
       [bookingId]
     )
     if (existingAntrian) {
       await executeQuery(
-        `UPDATE booking b
-        JOIN jadwal_dokter jd ON jd.id = ?
-        SET b.jadwal_dokter_id = ?, b.dokter_id = jd.dokter_id, b.status = 'Selesai'
-        WHERE b.id = ? AND b.pasien_id = ?`,
-        [jadwalDokterId, jadwalDokterId, bookingId, session.user.id]
+        `UPDATE antrian SET created_at = NOW() WHERE id = ?`,
+        [existingAntrian.id]
+      )
+      await executeQuery(
+        // `UPDATE booking b
+        // JOIN jadwal_dokter jd ON jd.id = ?
+        // SET b.jadwal_dokter_id = ?, b.dokter_id = jd.dokter_id, b.status = 'Selesai'
+        // WHERE b.id = ? AND b.pasien_id = ?`,
+        // [jadwalDokterId, jadwalDokterId, bookingId, session.user.id]
+        `UPDATE booking SET jadwal_dokter_id = ?, status = 'Selesai' WHERE id = ?`,
+        [jadwalDokterId, bookingId]
       )
       return NextResponse.json({
         success: true,
@@ -50,11 +56,13 @@ export async function POST(req: Request) {
         [bookingId, formattedAntrianNumber, jadwalDokterId]
       )
       await executeQuery(
-        `UPDATE booking b
-        JOIN jadwal_dokter jd ON jd.id = ?
-        SET b.jadwal_dokter_id = ?, b.dokter_id = jd.dokter_id, b.status = 'Selesai'
-        WHERE b.id = ? AND b.pasien_id = ?`,
-        [jadwalDokterId, jadwalDokterId, bookingId, session.user.id]
+        // `UPDATE booking b
+        // JOIN jadwal_dokter jd ON jd.id = ?
+        // SET b.jadwal_dokter_id = ?, b.dokter_id = jd.dokter_id, b.status = 'Selesai'
+        // WHERE b.id = ? AND b.pasien_id = ?`,
+        // [jadwalDokterId, jadwalDokterId, bookingId, session.user.id]
+        `UPDATE booking SET jadwal_dokter_id = ?, status = 'Selesai' WHERE id = ?`,
+        [jadwalDokterId, bookingId]
       )
       return NextResponse.json({
         success: true,

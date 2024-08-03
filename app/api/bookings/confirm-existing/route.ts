@@ -20,6 +20,10 @@ export async function POST(req: Request) {
       [bookingId]
     )
     if (existingAntrian) {
+      await executeQuery(
+        `UPDATE antrian SET created_at = NOW() WHERE id = ?`,
+        [existingAntrian.id]
+      )
       return NextResponse.json({
         success: true,
         antrianId: existingAntrian.id,
@@ -38,17 +42,14 @@ export async function POST(req: Request) {
         newAntrianNumber = parseInt(lastAntrian.last_number, 10) + 1
       }
       const formattedAntrianNumber = newAntrianNumber.toString().padStart(3, "0")
-      const result = await executeQuery<any>(
+      const { insertId: antrianId } = await executeQuery<any>(
         `INSERT INTO antrian (booking_id, nomor_antrian, created_at, jadwal_dokter_id) 
         VALUES (?, ?, NOW(), ?)`,
         [bookingId, formattedAntrianNumber, jadwalDokterId]
       )
-      if (!result || !result.insertId) {
-        throw new Error("Failed to insert new antrian")
-      }
       return NextResponse.json({
         success: true,
-        antrianId: result.insertId,
+        antrianId,
         nomorAntrian: formattedAntrianNumber,
       })
     }

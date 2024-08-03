@@ -2,27 +2,19 @@ import { CetakAntrianClient, Layout } from "@/components/organisms"
 import { executeQuery } from "@/lib/utils"
 
 async function getAntrianData(antrianId: string) {
-  try {
-    const [antrian]: any[] = await executeQuery(
-      `SELECT a.*, b.kode_booking, p.nama as nama_pasien, po.nama as nama_poli, d.nama as nama_dokter
-       FROM antrian a
-       JOIN booking b ON a.booking_id = b.id
-       JOIN pasien p ON b.pasien_id = p.id
-       JOIN poli po ON b.poli_id = po.id
-       LEFT JOIN dokter d ON b.dokter_id = d.id
-       WHERE a.id = ?`,
-      [antrianId]
-    )
-    if (!antrian) {
-      console.log("Antrian tidak ditemukan untuk ID:", antrianId)
-      return null
-    }
-    console.log("Data antrian yang ditemukan:", antrian)
-    return antrian
-  } catch (error) {
-    console.error("Error saat mengambil data antrian:", error)
-    return null
-  }
+  const [antrian]: any[] = await executeQuery(
+    `SELECT a.*, b.kode_booking, p.nama as nama_pasien, po.nama as nama_poli, d.nama as nama_dokter,
+     jd.hari, jd.jam_mulai, jd.jam_selesai
+     FROM antrian a
+     JOIN booking b ON a.booking_id = b.id
+     JOIN pasien p ON b.pasien_id = p.id
+     JOIN poli po ON b.poli_id = po.id
+     JOIN jadwal_dokter jd ON a.jadwal_dokter_id = jd.id
+     LEFT JOIN dokter d ON jd.dokter_id = d.id
+     WHERE a.id = ?`,
+    [antrianId]
+  )
+  return antrian
 }
 
 export default async function CetakAntrianPage({
@@ -31,7 +23,6 @@ export default async function CetakAntrianPage({
   params: { antrianId: string }
 }) {
   const antrian = await getAntrianData(params.antrianId)
-
   if (!antrian) {
     return <p className="text-red-500">Data antrian tidak ditemukan</p>
   }
