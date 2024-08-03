@@ -20,11 +20,6 @@ export async function POST(req: Request) {
         [existingAntrian.id]
       )
       await executeQuery(
-        // `UPDATE booking b
-        // JOIN jadwal_dokter jd ON jd.id = ?
-        // SET b.jadwal_dokter_id = ?, b.dokter_id = jd.dokter_id, b.status = 'Selesai'
-        // WHERE b.id = ? AND b.pasien_id = ?`,
-        // [jadwalDokterId, jadwalDokterId, bookingId, session.user.id]
         `UPDATE booking SET jadwal_dokter_id = ?, status = 'Selesai' WHERE id = ?`,
         [jadwalDokterId, bookingId]
       )
@@ -56,11 +51,6 @@ export async function POST(req: Request) {
         [bookingId, formattedAntrianNumber, jadwalDokterId]
       )
       await executeQuery(
-        // `UPDATE booking b
-        // JOIN jadwal_dokter jd ON jd.id = ?
-        // SET b.jadwal_dokter_id = ?, b.dokter_id = jd.dokter_id, b.status = 'Selesai'
-        // WHERE b.id = ? AND b.pasien_id = ?`,
-        // [jadwalDokterId, jadwalDokterId, bookingId, session.user.id]
         `UPDATE booking SET jadwal_dokter_id = ?, status = 'Selesai' WHERE id = ?`,
         [jadwalDokterId, bookingId]
       )
