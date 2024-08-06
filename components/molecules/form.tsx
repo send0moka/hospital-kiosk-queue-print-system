@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react"
+import React, { useRef, useState, useEffect } from "react"
 import { Button } from "@/components/atoms"
 import { Search, RefreshCcw } from "lucide-react"
 import { BookingModal } from "@/components/molecules"
@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation"
 import { getSession, signIn, useSession } from "next-auth/react"
 import { z } from "zod"
 import { Session } from "next-auth"
+import Keyboard, { KeyboardReactInterface } from "react-simple-keyboard"
+import "react-simple-keyboard/build/css/index.css"
 
 interface FormProps {
   type:
@@ -18,13 +20,11 @@ interface FormProps {
 }
 
 const Form: React.FC<FormProps> = ({ type }) => {
-  const [inputValues, setInputValues] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [bookingData, setBookingData] = useState<any | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
   const { data: session } = useSession()
+  const [layoutName, setLayoutName] = useState("default")
+  const [currentInputIndex, setCurrentInputIndex] = useState(0)
+  const keyboard = useRef<KeyboardReactInterface | null>(null)
   const getConfig = () => {
     switch (type) {
       case "bpjs-belum-booking":
@@ -54,6 +54,54 @@ const Form: React.FC<FormProps> = ({ type }) => {
     }
   }
   const config = getConfig()
+  const [inputValues, setInputValues] = useState<string[]>(Array(config.length).fill(''))
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [bookingData, setBookingData] = useState<any | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  useEffect(() => {
+    const activeInput = document.getElementById(`input-${currentInputIndex}`)
+    if (activeInput) {
+      activeInput.focus()
+    }
+  }, [currentInputIndex])
+  const onKeyPress = (button: string) => {
+    if (button === "{shift}" || button === "{lock}") {
+      setLayoutName(layoutName === "default" ? "shift" : "default")
+    } else {
+      const newInputValues = [...inputValues]
+      if (button === "{bksp}") {
+        newInputValues[currentInputIndex] = ""
+        if (currentInputIndex > 0) {
+          setCurrentInputIndex(currentInputIndex - 1)
+        }
+      } else if (button.length === 1) {
+        newInputValues[currentInputIndex] = button
+        if (currentInputIndex < config.length - 1) {
+          setCurrentInputIndex(currentInputIndex + 1)
+        }
+      }
+      setInputValues(newInputValues)
+    }
+  }
+  const handleInputFocus = (index: number) => {
+    if (keyboard.current) {
+      keyboard.current.setOptions({
+        inputName: `input-${index}`
+      })
+    }
+  }
+  const keyboardStyle = {
+    backgroundColor: 'white',
+    padding: '10px',
+    borderRadius: '5px',
+    boxShadow: '0px 0px 10px rgba(0,0,0,0.1)'
+  }
+  const buttonStyle = {
+    backgroundColor: '#f0f0f0',
+    color: 'black',
+    fontSize: '16px'
+  }
   const handleInputChange = (index: number, value: string) => {
     const newInputValues = [...inputValues]
     newInputValues[index] = value
@@ -222,17 +270,16 @@ const Form: React.FC<FormProps> = ({ type }) => {
           Masukkan {config.label}
         </label>
         <div className="flex gap-2">
-          {[...Array(config.length)].map((_, index) => (
+          {inputValues.map((value, index) => (
             <input
               key={index}
               id={`input-${index}`}
               className="rounded-xl font-semibold text-5xl py-2 w-16 text-center text-black uppercase"
               type="text"
               maxLength={1}
-              value={inputValues[index] || ""}
-              onChange={(e) => handleInputChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              onPaste={index === 0 ? handlePaste : undefined}
+              value={value}
+              onFocus={() => handleInputFocus(index)}
+              readOnly
             />
           ))}
         </div>
@@ -268,6 +315,27 @@ const Form: React.FC<FormProps> = ({ type }) => {
           </Button>
         </div>
       </form>
+      <div className="mt-4" style={keyboardStyle}>
+        <Keyboard
+          keyboardRef={(r: KeyboardReactInterface) => (keyboard.current = r)}
+          layoutName={layoutName}
+          onKeyPress={onKeyPress}
+          buttonTheme={[
+            {
+              class: "custom-btn",
+              buttons: "Q W E R T Y U I O P A S D F G H J K L Z X C V B N M 1 2 3 4 5 6 7 8 9 0"
+            }
+          ]}
+          theme={"hg-theme-default hg-layout-default custom-keyboard"}
+        />
+      </div>
+      <style jsx global>{`
+        .custom-keyboard .hg-button {
+          background-color: #f0f0f0;
+          color: black;
+          font-size: 16px;
+        }
+      `}</style>
       <BookingModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

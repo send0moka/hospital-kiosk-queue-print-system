@@ -44,7 +44,7 @@ const Footer = () => {
         // Footer untuk halaman utama
         <>
             <p>{formatTime(currentDateTime)} | {formatDate(currentDateTime)}</p>
-            <span>Self Service Application</span>
+            <span>Sistem Cetak Antrian</span>
             <a href="bantuan">Bantuan & Informasi</a>
         </>
       ) : isSpecialPage ? (
