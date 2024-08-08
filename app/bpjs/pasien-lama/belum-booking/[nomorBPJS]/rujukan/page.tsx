@@ -8,21 +8,17 @@ import { useEffect } from "react"
 const BPJSRujukanPage = ({ params }: { params: { nomorBPJS: string } }) => {
   const { data: session, status } = useSession()
   const router = useRouter()
-
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/bpjs/pasien-lama/belum-booking")
     }
   }, [status, router])
-
   if (status === "loading") {
     return <div>Loading...</div>
   }
-
   if (!session) {
     return null
   }
-
   return (
     <Layout>
       <div className="flex justify-between">

@@ -37,3 +37,4 @@ yarn-error.log*
 next-env.d.ts
 
 /public/receipts/*.pdf
+docs.md

@@ -97,30 +97,6 @@ const Form: React.FC<FormProps> = ({ type }) => {
     borderRadius: '5px',
     boxShadow: '0px 0px 10px rgba(0,0,0,0.1)'
   }
-  const buttonStyle = {
-    backgroundColor: '#f0f0f0',
-    color: 'black',
-    fontSize: '16px'
-  }
-  const handleInputChange = (index: number, value: string) => {
-    const newInputValues = [...inputValues]
-    newInputValues[index] = value
-    if (config.type === "number" && !/^\d*$/.test(value)) return
-    setInputValues(newInputValues)
-    if (value && index < config.length - 1) {
-      const nextInput = document.getElementById(`input-${index + 1}`)
-      if (nextInput) nextInput.focus()
-    }
-  }
-  const handleKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (e.key === "Backspace" && !inputValues[index] && index > 0) {
-      const prevInput = document.getElementById(`input-${index - 1}`)
-      if (prevInput) prevInput.focus()
-    }
-  }
   const validateBPJS = (inputValue: string) => {
     const bpjsSchema = z
       .string()
@@ -236,29 +212,6 @@ const Form: React.FC<FormProps> = ({ type }) => {
   }
   const handleReset = () => {
     window.location.reload()
-  }
-  const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
-    event.preventDefault()
-    const pastedText = event.clipboardData.getData("text")
-    const sanitizedText = pastedText
-      .replace(/[^a-zA-Z0-9]/g, "")
-      .slice(0, config.length)
-    const newInputValues = [...inputValues]
-    for (let i = 0; i < sanitizedText.length; i++) {
-      if (i < config.length) {
-        newInputValues[i] = sanitizedText[i]
-      }
-    }
-    setInputValues(newInputValues)
-    const nextEmptyIndex = newInputValues.findIndex((value) => !value)
-    const nextInputId =
-      nextEmptyIndex !== -1
-        ? `input-${nextEmptyIndex}`
-        : `input-${config.length - 1}`
-    const nextInput = document.getElementById(nextInputId) as HTMLInputElement
-    if (nextInput) {
-      nextInput.focus()
-    }
   }
   return (
     <>

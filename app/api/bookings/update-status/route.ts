@@ -7,9 +7,7 @@ export async function POST(req: Request) {
     if (typeof bookingId !== "number" || !['Menunggu', 'Selesai'].includes(status)) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 })
     }
-
     await updateBookingStatus(bookingId, status)
-
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error updating booking status:", error)

@@ -12,7 +12,6 @@ async function getBookingData(bookingId: string, nomorBPJS: string) {
      WHERE b.id = ? AND pas.nomor_bpjs = ?`,
     [bookingId, nomorBPJS]
   )
-
   return booking
 }
 
